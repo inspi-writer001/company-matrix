@@ -1,0 +1,541 @@
+{
+  "address": "qbgCJXMfnpSHfAkgGmuz5qGmrFX9C1a4Xs7BCtk4bPu",
+  "metadata": {
+    "name": "x2_matrix",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "claim_level2_payment",
+      "discriminator": [
+        64,
+        2,
+        175,
+        13,
+        238,
+        206,
+        29,
+        253
+      ],
+      "accounts": [
+        {
+          "name": "global_state",
+          "writable": true
+        },
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "user_account",
+          "writable": true
+        },
+        {
+          "name": "position_record"
+        }
+      ],
+      "args": [
+        {
+          "name": "child_position",
+          "type": "u64"
+        },
+        {
+          "name": "level",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "create_user",
+      "discriminator": [
+        108,
+        227,
+        130,
+        130,
+        252,
+        109,
+        75,
+        218
+      ],
+      "accounts": [
+        {
+          "name": "user_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initialize",
+      "discriminator": [
+        175,
+        175,
+        109,
+        31,
+        13,
+        152,
+        155,
+        237
+      ],
+      "accounts": [
+        {
+          "name": "global_state",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "rent",
+          "address": "SysvarRent111111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "company_wallet",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "pif_user",
+      "discriminator": [
+        110,
+        219,
+        100,
+        225,
+        236,
+        177,
+        191,
+        162
+      ],
+      "accounts": [
+        {
+          "name": "global_state",
+          "writable": true
+        },
+        {
+          "name": "sponsor",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "sponsor_account",
+          "writable": true
+        },
+        {
+          "name": "sponsor_token",
+          "writable": true
+        },
+        {
+          "name": "downline"
+        },
+        {
+          "name": "downline_account",
+          "writable": true
+        },
+        {
+          "name": "position_record",
+          "writable": true
+        },
+        {
+          "name": "escrow",
+          "writable": true
+        },
+        {
+          "name": "company_token",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "withdraw",
+      "discriminator": [
+        183,
+        18,
+        70,
+        156,
+        148,
+        109,
+        161,
+        34
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "user_account",
+          "writable": true
+        },
+        {
+          "name": "global_state"
+        },
+        {
+          "name": "user_token",
+          "writable": true
+        },
+        {
+          "name": "escrow",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "GlobalState",
+      "discriminator": [
+        163,
+        46,
+        74,
+        168,
+        216,
+        123,
+        133,
+        98
+      ]
+    },
+    {
+      "name": "PositionRecord",
+      "discriminator": [
+        108,
+        204,
+        45,
+        207,
+        168,
+        255,
+        213,
+        158
+      ]
+    },
+    {
+      "name": "UserAccount",
+      "discriminator": [
+        211,
+        33,
+        136,
+        16,
+        186,
+        110,
+        242,
+        127
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "PaymentClaimed",
+      "discriminator": [
+        238,
+        86,
+        136,
+        254,
+        229,
+        217,
+        63,
+        80
+      ]
+    },
+    {
+      "name": "PositionCreated",
+      "discriminator": [
+        63,
+        226,
+        54,
+        63,
+        141,
+        22,
+        31,
+        221
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidLevel",
+      "msg": "Invalid level"
+    },
+    {
+      "code": 6001,
+      "name": "NotActive",
+      "msg": "Not active"
+    },
+    {
+      "code": 6002,
+      "name": "InsufficientBalance",
+      "msg": "Insufficient balance"
+    },
+    {
+      "code": 6003,
+      "name": "NeedTwoPifs",
+      "msg": "Need 2 PIFs to withdraw"
+    },
+    {
+      "code": 6004,
+      "name": "NotParent",
+      "msg": "Not the parent position"
+    },
+    {
+      "code": 6005,
+      "name": "NotOwner",
+      "msg": "Not the owner"
+    },
+    {
+      "code": 6006,
+      "name": "NotLevel2",
+      "msg": "Not a Level 2 placement"
+    }
+  ],
+  "types": [
+    {
+      "name": "GlobalState",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "company_wallet",
+            "type": "pubkey"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "total_positions",
+            "type": {
+              "array": [
+                "u64",
+                6
+              ]
+            }
+          },
+          {
+            "name": "escrow_bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PaymentClaimed",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "position",
+            "type": "u64"
+          },
+          {
+            "name": "from_child",
+            "type": "u64"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PositionCreated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "level",
+            "type": "u8"
+          },
+          {
+            "name": "position_number",
+            "type": "u64"
+          },
+          {
+            "name": "parent_number",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PositionRecord",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "level",
+            "type": "u8"
+          },
+          {
+            "name": "position_number",
+            "type": "u64"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "UserAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "registered_at",
+            "type": "i64"
+          },
+          {
+            "name": "is_active",
+            "type": "bool"
+          },
+          {
+            "name": "sponsor",
+            "type": "pubkey"
+          },
+          {
+            "name": "pif_count",
+            "type": "u8"
+          },
+          {
+            "name": "total_earnings",
+            "type": "u64"
+          },
+          {
+            "name": "available_balance",
+            "type": "u64"
+          },
+          {
+            "name": "reserve_balance",
+            "type": "u64"
+          },
+          {
+            "name": "positions_count",
+            "type": {
+              "array": [
+                "u32",
+                6
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
