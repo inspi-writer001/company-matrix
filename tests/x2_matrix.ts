@@ -190,6 +190,25 @@ describe("x2_matrix", () => {
     });
   });
 
+  // it("should withdraw from user earnings", async () => {
+  //   console.log("=== Attempting to withdraw from user's balance ===");
+  //   try {
+  //     const tx = await program.methods.claimLevel2Payment().signers([user1_wallet]).accounts({
+  //       globalState: global_state_pda,
+  //       positionRecord:
+  //     })
+
+  //     console.log("Your transaction signature", tx);
+  //   } catch (error) {
+
+  //     if (error.logs) {
+  //       console.log(error.logs);
+  //     }
+  //     throw error;
+  //   }
+
+  // });
+
   const createUser = async (user: anchor.web3.Keypair) => {
     try {
       const tx = await program.methods

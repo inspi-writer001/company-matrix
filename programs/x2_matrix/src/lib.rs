@@ -45,6 +45,8 @@ pub mod x2_matrix {
             1_000_000,
         )?;
 
+        assert!(!ctx.accounts.downline_account.is_active, "User already belongs to a team");
+
         // Activate user
         ctx.accounts.downline_account.is_active = true;
         ctx.accounts.downline_account.sponsor = ctx.accounts.sponsor.key();
