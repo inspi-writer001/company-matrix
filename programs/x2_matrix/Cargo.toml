@@ -1,12 +1,12 @@
 [package]
-name = "x2_matrix"
+name = "x12_matrix"
 version = "0.1.0"
 description = "Created with Anchor"
 edition = "2021"
 
 [lib]
 crate-type = ["cdylib", "lib"]
-name = "x2_matrix"
+name = "x12_matrix"
 
 [features]
 default = []

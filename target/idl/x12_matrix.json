@@ -1,20 +1,93 @@
-/**
- * Program IDL in camelCase format in order to be used in JS/TS.
- *
- * Note that this is only a type helper and is not the actual IDL. The original
- * IDL can be found at `target/idl/x2_matrix.json`.
- */
-export type X2Matrix = {
-  "address": "qbgCJXMfnpSHfAkgGmuz5qGmrFX9C1a4Xs7BCtk4bPu",
+{
+  "address": "HdAGWMfX7Y5ykkh815A464NQffNKfXj1papBwJyMLzbw",
   "metadata": {
-    "name": "x2Matrix",
+    "name": "x12_matrix",
     "version": "0.1.0",
     "spec": "0.1.0",
     "description": "Created with Anchor"
   },
   "instructions": [
     {
-      "name": "claimLevel2Payment",
+      "name": "activate_wealthy_club",
+      "discriminator": [
+        239,
+        205,
+        187,
+        5,
+        23,
+        161,
+        200,
+        76
+      ],
+      "accounts": [
+        {
+          "name": "global_state",
+          "writable": true
+        },
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "wealthy_club_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  119,
+                  101,
+                  97,
+                  108,
+                  116,
+                  104,
+                  121,
+                  95,
+                  99,
+                  108,
+                  117,
+                  98
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_token",
+          "writable": true
+        },
+        {
+          "name": "escrow",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "sponsor",
+          "type": {
+            "option": "pubkey"
+          }
+        }
+      ]
+    },
+    {
+      "name": "claim_level2_payment",
       "discriminator": [
         64,
         2,
@@ -27,7 +100,7 @@ export type X2Matrix = {
       ],
       "accounts": [
         {
-          "name": "globalState",
+          "name": "global_state",
           "writable": true
         },
         {
@@ -36,16 +109,16 @@ export type X2Matrix = {
           "signer": true
         },
         {
-          "name": "userAccount",
+          "name": "user_account",
           "writable": true
         },
         {
-          "name": "positionRecord"
+          "name": "position_record"
         }
       ],
       "args": [
         {
-          "name": "childPosition",
+          "name": "child_position",
           "type": "u64"
         },
         {
@@ -55,7 +128,7 @@ export type X2Matrix = {
       ]
     },
     {
-      "name": "createUser",
+      "name": "create_user",
       "discriminator": [
         108,
         227,
@@ -68,7 +141,7 @@ export type X2Matrix = {
       ],
       "accounts": [
         {
-          "name": "userAccount",
+          "name": "user_account",
           "writable": true,
           "pda": {
             "seeds": [
@@ -94,7 +167,7 @@ export type X2Matrix = {
           "signer": true
         },
         {
-          "name": "systemProgram",
+          "name": "system_program",
           "address": "11111111111111111111111111111111"
         }
       ],
@@ -114,7 +187,7 @@ export type X2Matrix = {
       ],
       "accounts": [
         {
-          "name": "globalState",
+          "name": "global_state",
           "writable": true,
           "pda": {
             "seeds": [
@@ -166,10 +239,10 @@ export type X2Matrix = {
           "signer": true
         },
         {
-          "name": "tokenProgram"
+          "name": "token_program"
         },
         {
-          "name": "systemProgram",
+          "name": "system_program",
           "address": "11111111111111111111111111111111"
         },
         {
@@ -179,13 +252,13 @@ export type X2Matrix = {
       ],
       "args": [
         {
-          "name": "companyWallet",
+          "name": "company_wallet",
           "type": "pubkey"
         }
       ]
     },
     {
-      "name": "pifUser",
+      "name": "pif_user",
       "discriminator": [
         110,
         219,
@@ -198,7 +271,7 @@ export type X2Matrix = {
       ],
       "accounts": [
         {
-          "name": "globalState",
+          "name": "global_state",
           "writable": true
         },
         {
@@ -207,22 +280,22 @@ export type X2Matrix = {
           "signer": true
         },
         {
-          "name": "sponsorAccount",
+          "name": "sponsor_account",
           "writable": true
         },
         {
-          "name": "sponsorToken",
+          "name": "sponsor_token",
           "writable": true
         },
         {
           "name": "downline"
         },
         {
-          "name": "downlineAccount",
+          "name": "downline_account",
           "writable": true
         },
         {
-          "name": "positionRecord",
+          "name": "position_record",
           "writable": true
         },
         {
@@ -230,21 +303,74 @@ export type X2Matrix = {
           "writable": true
         },
         {
-          "name": "companyToken",
+          "name": "company_token",
           "writable": true
         },
         {
           "name": "mint"
         },
         {
-          "name": "tokenProgram"
+          "name": "token_program"
         },
         {
-          "name": "systemProgram",
+          "name": "system_program",
           "address": "11111111111111111111111111111111"
         }
       ],
       "args": []
+    },
+    {
+      "name": "process_diamond_completion",
+      "discriminator": [
+        27,
+        75,
+        97,
+        223,
+        144,
+        194,
+        226,
+        4
+      ],
+      "accounts": [
+        {
+          "name": "global_state",
+          "writable": true
+        },
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "user_account",
+          "writable": true
+        },
+        {
+          "name": "user_wealthy_club"
+        },
+        {
+          "name": "escrow",
+          "writable": true
+        },
+        {
+          "name": "company_token",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "sponsor_chain",
+          "type": {
+            "vec": "pubkey"
+          }
+        }
+      ]
     },
     {
       "name": "withdraw",
@@ -265,14 +391,14 @@ export type X2Matrix = {
           "signer": true
         },
         {
-          "name": "userAccount",
+          "name": "user_account",
           "writable": true
         },
         {
-          "name": "globalState"
+          "name": "global_state"
         },
         {
-          "name": "userToken",
+          "name": "user_token",
           "writable": true
         },
         {
@@ -283,7 +409,7 @@ export type X2Matrix = {
           "name": "mint"
         },
         {
-          "name": "tokenProgram"
+          "name": "token_program"
         }
       ],
       "args": [
@@ -296,7 +422,7 @@ export type X2Matrix = {
   ],
   "accounts": [
     {
-      "name": "globalState",
+      "name": "GlobalState",
       "discriminator": [
         163,
         46,
@@ -309,7 +435,7 @@ export type X2Matrix = {
       ]
     },
     {
-      "name": "positionRecord",
+      "name": "PositionRecord",
       "discriminator": [
         108,
         204,
@@ -322,7 +448,7 @@ export type X2Matrix = {
       ]
     },
     {
-      "name": "userAccount",
+      "name": "UserAccount",
       "discriminator": [
         211,
         33,
@@ -333,11 +459,37 @@ export type X2Matrix = {
         242,
         127
       ]
+    },
+    {
+      "name": "WealthyClubAccount",
+      "discriminator": [
+        141,
+        27,
+        29,
+        60,
+        21,
+        237,
+        227,
+        130
+      ]
     }
   ],
   "events": [
     {
-      "name": "paymentClaimed",
+      "name": "DiamondCompleted",
+      "discriminator": [
+        105,
+        100,
+        10,
+        255,
+        248,
+        28,
+        247,
+        28
+      ]
+    },
+    {
+      "name": "PaymentClaimed",
       "discriminator": [
         238,
         86,
@@ -350,7 +502,7 @@ export type X2Matrix = {
       ]
     },
     {
-      "name": "positionCreated",
+      "name": "PositionCreated",
       "discriminator": [
         63,
         226,
@@ -361,53 +513,109 @@ export type X2Matrix = {
         31,
         221
       ]
+    },
+    {
+      "name": "WealthyClubActivated",
+      "discriminator": [
+        251,
+        180,
+        60,
+        12,
+        148,
+        175,
+        90,
+        132
+      ]
+    },
+    {
+      "name": "WealthyClubPayment",
+      "discriminator": [
+        19,
+        160,
+        150,
+        204,
+        231,
+        208,
+        237,
+        15
+      ]
     }
   ],
   "errors": [
     {
       "code": 6000,
-      "name": "invalidLevel",
+      "name": "InvalidLevel",
       "msg": "Invalid level"
     },
     {
       "code": 6001,
-      "name": "notActive",
+      "name": "NotActive",
       "msg": "Not active"
     },
     {
       "code": 6002,
-      "name": "insufficientBalance",
+      "name": "InsufficientBalance",
       "msg": "Insufficient balance"
     },
     {
       "code": 6003,
-      "name": "needTwoPifs",
+      "name": "NeedTwoPifs",
       "msg": "Need 2 PIFs to withdraw"
     },
     {
       "code": 6004,
-      "name": "notParent",
+      "name": "NotParent",
       "msg": "Not the parent position"
     },
     {
       "code": 6005,
-      "name": "notOwner",
+      "name": "NotOwner",
       "msg": "Not the owner"
     },
     {
       "code": 6006,
-      "name": "notLevel2",
+      "name": "NotLevel2",
       "msg": "Not a Level 2 placement"
+    },
+    {
+      "code": 6007,
+      "name": "AlreadyActivated",
+      "msg": "Already activated"
+    },
+    {
+      "code": 6008,
+      "name": "WealthyClubNotActivated",
+      "msg": "Wealthy Club not activated"
     }
   ],
   "types": [
     {
-      "name": "globalState",
+      "name": "DiamondCompleted",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "companyWallet",
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "re_entries_created",
+            "type": "u32"
+          },
+          {
+            "name": "wealthy_club_payment",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "GlobalState",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "company_wallet",
             "type": "pubkey"
           },
           {
@@ -415,7 +623,7 @@ export type X2Matrix = {
             "type": "pubkey"
           },
           {
-            "name": "totalPositions",
+            "name": "total_positions",
             "type": {
               "array": [
                 "u64",
@@ -424,14 +632,22 @@ export type X2Matrix = {
             }
           },
           {
-            "name": "escrowBump",
+            "name": "escrow_bump",
             "type": "u8"
+          },
+          {
+            "name": "wealthy_club_total_members",
+            "type": "u64"
+          },
+          {
+            "name": "wealthy_club_active_members",
+            "type": "u64"
           }
         ]
       }
     },
     {
-      "name": "paymentClaimed",
+      "name": "PaymentClaimed",
       "type": {
         "kind": "struct",
         "fields": [
@@ -440,7 +656,7 @@ export type X2Matrix = {
             "type": "u64"
           },
           {
-            "name": "fromChild",
+            "name": "from_child",
             "type": "u64"
           },
           {
@@ -451,7 +667,7 @@ export type X2Matrix = {
       }
     },
     {
-      "name": "positionCreated",
+      "name": "PositionCreated",
       "type": {
         "kind": "struct",
         "fields": [
@@ -464,18 +680,18 @@ export type X2Matrix = {
             "type": "u8"
           },
           {
-            "name": "positionNumber",
+            "name": "position_number",
             "type": "u64"
           },
           {
-            "name": "parentNumber",
+            "name": "parent_number",
             "type": "u64"
           }
         ]
       }
     },
     {
-      "name": "positionRecord",
+      "name": "PositionRecord",
       "type": {
         "kind": "struct",
         "fields": [
@@ -484,7 +700,7 @@ export type X2Matrix = {
             "type": "u8"
           },
           {
-            "name": "positionNumber",
+            "name": "position_number",
             "type": "u64"
           },
           {
@@ -495,7 +711,7 @@ export type X2Matrix = {
       }
     },
     {
-      "name": "userAccount",
+      "name": "UserAccount",
       "type": {
         "kind": "struct",
         "fields": [
@@ -504,11 +720,11 @@ export type X2Matrix = {
             "type": "pubkey"
           },
           {
-            "name": "registeredAt",
+            "name": "registered_at",
             "type": "i64"
           },
           {
-            "name": "isActive",
+            "name": "is_active",
             "type": "bool"
           },
           {
@@ -516,23 +732,23 @@ export type X2Matrix = {
             "type": "pubkey"
           },
           {
-            "name": "pifCount",
+            "name": "pif_count",
             "type": "u8"
           },
           {
-            "name": "totalEarnings",
+            "name": "total_earnings",
             "type": "u64"
           },
           {
-            "name": "availableBalance",
+            "name": "available_balance",
             "type": "u64"
           },
           {
-            "name": "reserveBalance",
+            "name": "reserve_balance",
             "type": "u64"
           },
           {
-            "name": "positionsCount",
+            "name": "positions_count",
             "type": {
               "array": [
                 "u32",
@@ -542,6 +758,86 @@ export type X2Matrix = {
           }
         ]
       }
+    },
+    {
+      "name": "WealthyClubAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "sponsor",
+            "type": "pubkey"
+          },
+          {
+            "name": "activated_sponsor",
+            "type": "pubkey"
+          },
+          {
+            "name": "is_activated",
+            "type": "bool"
+          },
+          {
+            "name": "position_number",
+            "type": "u64"
+          },
+          {
+            "name": "total_earned",
+            "type": "u64"
+          },
+          {
+            "name": "joined_at",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "WealthyClubActivated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "position_number",
+            "type": "u64"
+          },
+          {
+            "name": "activated_sponsor",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "WealthyClubPayment",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "recipient",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "level",
+            "type": "u8"
+          },
+          {
+            "name": "from_user",
+            "type": "pubkey"
+          }
+        ]
+      }
     }
   ]
-};
+}

@@ -5,7 +5,7 @@ import {
   getOrCreateAssociatedTokenAccount
 } from "@solana/spl-token";
 import { TOKEN_PROGRAM_ID } from "@coral-xyz/anchor/dist/cjs/utils/token";
-import { X2Matrix } from "../target/types/x2_matrix";
+import { X12Matrix } from "../target/types/x12_matrix";
 
 import authority_wallet_file from "./wallets/authority-wallet.json";
 import user1_wallet_file from "./wallets/user-1-wallet.json";
@@ -70,11 +70,11 @@ const company_Wallet = new anchor.web3.PublicKey(
 const token_mint = new anchor.web3.PublicKey(
   "6mWfrWzYf5ot4S8Bti5SCDRnZWA5ABPH1SNkSq4mNN1C"
 );
-describe("x2_matrix", () => {
+describe("x12_matrix", () => {
   // Configure the client to use the local cluster.
   anchor.setProvider(anchor.AnchorProvider.env());
 
-  const program = anchor.workspace.x2Matrix as Program<X2Matrix>;
+  const program = anchor.workspace.x12Matrix as Program<X12Matrix>;
   const [global_state_pda, _bump_global_state] =
     anchor.web3.PublicKey.findProgramAddressSync(
       [Buffer.from("global_state")],
@@ -133,6 +133,7 @@ describe("x2_matrix", () => {
   // it("should fetch direct downlines for user1", async () => {
   //   console.log("=== Fetching user1's direct downlines ===");
 
+  //   // const downlines = await fetchDownlinesBySponsor(user1_wallet.publicKey);
   //   const downlines = await fetchDownlinesBySponsor(user1_wallet.publicKey);
 
   //   console.log(`User1 has ${downlines.length} direct downlines:`);
