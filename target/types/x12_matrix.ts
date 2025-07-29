@@ -379,6 +379,77 @@ export type X12Matrix = {
       ]
     },
     {
+      "name": "purchaseLevel",
+      "discriminator": [
+        195,
+        138,
+        91,
+        201,
+        82,
+        188,
+        84,
+        103
+      ],
+      "accounts": [
+        {
+          "name": "globalState",
+          "writable": true
+        },
+        {
+          "name": "sponsor",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "sponsorAccount",
+          "writable": true
+        },
+        {
+          "name": "sponsorToken",
+          "writable": true
+        },
+        {
+          "name": "downline"
+        },
+        {
+          "name": "downlineAccount",
+          "writable": true
+        },
+        {
+          "name": "positionRecord",
+          "writable": true
+        },
+        {
+          "name": "escrow",
+          "writable": true
+        },
+        {
+          "name": "companyToken",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "tokenProgram"
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "level",
+          "type": "u8"
+        },
+        {
+          "name": "downline",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
       "name": "withdraw",
       "discriminator": [
         183,

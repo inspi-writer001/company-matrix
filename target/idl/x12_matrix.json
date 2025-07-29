@@ -373,6 +373,77 @@
       ]
     },
     {
+      "name": "purchase_level",
+      "discriminator": [
+        195,
+        138,
+        91,
+        201,
+        82,
+        188,
+        84,
+        103
+      ],
+      "accounts": [
+        {
+          "name": "global_state",
+          "writable": true
+        },
+        {
+          "name": "sponsor",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "sponsor_account",
+          "writable": true
+        },
+        {
+          "name": "sponsor_token",
+          "writable": true
+        },
+        {
+          "name": "downline"
+        },
+        {
+          "name": "downline_account",
+          "writable": true
+        },
+        {
+          "name": "position_record",
+          "writable": true
+        },
+        {
+          "name": "escrow",
+          "writable": true
+        },
+        {
+          "name": "company_token",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "level",
+          "type": "u8"
+        },
+        {
+          "name": "downline",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
       "name": "withdraw",
       "discriminator": [
         183,

@@ -93,6 +93,8 @@ pub mod x12_matrix {
             ctx.accounts.global_state.escrow_bump,
         )?;
 
+        
+
         emit!(PositionCreated {
             owner: ctx.accounts.downline.key(),
             level: 0,
@@ -146,6 +148,82 @@ pub fn claim_level2_payment(
         position: parent_num,
         from_child: child_position,
         amount: earnings,
+    });
+
+    Ok(())
+}
+
+pub fn purchase_level(
+    ctx: Context<PurchaseLevel>, 
+    level: u8,
+    downline: Pubkey,
+) -> Result<()> {
+    // Validate level
+    require!(level <= 5, MatrixError::InvalidLevel);
+    
+    let prices = [
+        1_000_000, 2_000_000, 4_000_000, 8_000_000, 16_000_000, 32_000_000,
+    ];
+    
+    let entry_cost = prices[level as usize];
+    
+    // Pay full entry cost
+    transfer_tokens(
+        &ctx.accounts.sponsor,
+        &ctx.accounts.sponsor_token,
+        &ctx.accounts.escrow,
+        &ctx.accounts.token_program,
+        &ctx.accounts.mint,
+        entry_cost,
+    )?;
+
+    // For higher levels, user must already be active
+    if level > 0 {
+        require!(ctx.accounts.downline_account.is_active, MatrixError::NotActive);
+    } else {
+        // Silver level activates user
+        assert!(!ctx.accounts.downline_account.is_active, "User already belongs to a team");
+        ctx.accounts.downline_account.is_active = true;
+        ctx.accounts.downline_account.sponsor = ctx.accounts.sponsor.key();
+        
+        // Update sponsor PIF count for Silver only
+        ctx.accounts.sponsor_account.pif_count += 1;
+        if ctx.accounts.sponsor_account.pif_count == 2 {
+            let reserve = ctx.accounts.sponsor_account.reserve_balance;
+            ctx.accounts.sponsor_account.available_balance += reserve;
+            ctx.accounts.sponsor_account.reserve_balance = 0;
+        }
+    }
+
+    // Create position at the specified level
+    let position_number = ctx.accounts.global_state.total_positions[level as usize] + 1;
+    ctx.accounts.global_state.total_positions[level as usize] = position_number;
+    ctx.accounts.downline_account.positions_count[level as usize] += 1;
+
+    // Create position record
+    let position_record = &mut ctx.accounts.position_record;
+    position_record.level = level;
+    position_record.position_number = position_number;
+    position_record.owner = downline;
+
+    // Calculate parent for 2x2 matrix
+    let parent_number = get_parent_position_2x2(position_number);
+
+    // Send 50% to company
+    transfer_to_company(
+        &ctx.accounts.escrow,
+        &ctx.accounts.company_token,
+        &ctx.accounts.token_program,
+        &ctx.accounts.mint,
+        entry_cost / 2,
+        ctx.accounts.global_state.escrow_bump,
+    )?;
+
+    emit!(PositionCreated {
+        owner: downline,
+        level,
+        position_number,
+        parent_number,
     });
 
     Ok(())
@@ -343,6 +421,18 @@ fn transfer_to_company<'info>(
     Ok(())
 }
 
+fn get_level_name(level: u8) -> &'static str {
+    match level {
+        0 => "Silver",
+        1 => "Gold", 
+        2 => "Sapphire",
+        3 => "Emerald",
+        4 => "Platinum",
+        5 => "Diamond",
+        _ => "Unknown"
+    }
+}
+
 fn get_parent_position_2x2(position: u64) -> u64 {
     if position == 1 {
         0  // Root has no parent
@@ -458,6 +548,51 @@ pub struct PifUser<'info> {
         payer = sponsor,
         space = 8 + PositionRecord::INIT_SPACE, 
         seeds = [b"position".as_ref(), &[0], global_state.total_positions[0].to_le_bytes().as_ref()],
+        bump
+    )]
+    pub position_record: Account<'info, PositionRecord>,
+
+    #[account(mut)]
+    pub escrow: InterfaceAccount<'info, TokenAccount>,
+
+    #[account(mut)]
+    pub company_token: InterfaceAccount<'info, TokenAccount>,
+
+    pub mint: InterfaceAccount<'info, Mint>,
+    pub token_program: Interface<'info, TokenInterface>,
+    pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+#[instruction(level: u8)]
+pub struct PurchaseLevel<'info> {
+    #[account(mut)]
+    pub global_state: Account<'info, GlobalState>,
+
+    #[account(mut)]
+    pub sponsor: Signer<'info>,
+
+    #[account(mut)]
+    pub sponsor_account: Account<'info, UserAccount>,
+
+    #[account(mut)]
+    pub sponsor_token: InterfaceAccount<'info, TokenAccount>,
+
+    /// CHECK: Downline
+    pub downline: UncheckedAccount<'info>,
+
+    #[account(mut)]
+    pub downline_account: Account<'info, UserAccount>,
+
+    #[account(
+        init,
+        payer = sponsor,
+        space = 8 + PositionRecord::INIT_SPACE,
+        seeds = [
+            b"position".as_ref(), 
+            &[level], 
+            global_state.total_positions[level as usize].checked_add(1).unwrap().to_le_bytes().as_ref()
+        ],
         bump
     )]
     pub position_record: Account<'info, PositionRecord>,
