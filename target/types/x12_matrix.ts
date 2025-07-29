@@ -379,6 +379,60 @@ export type X12Matrix = {
       ]
     },
     {
+      "name": "purchaseAllInMatrixSimple",
+      "discriminator": [
+        46,
+        212,
+        40,
+        213,
+        9,
+        115,
+        127,
+        42
+      ],
+      "accounts": [
+        {
+          "name": "globalState",
+          "writable": true
+        },
+        {
+          "name": "sponsor",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "sponsorAccount",
+          "writable": true
+        },
+        {
+          "name": "sponsorToken",
+          "writable": true
+        },
+        {
+          "name": "downline"
+        },
+        {
+          "name": "downlineAccount",
+          "writable": true
+        },
+        {
+          "name": "escrow",
+          "writable": true
+        },
+        {
+          "name": "companyToken",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "tokenProgram"
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "purchaseLevel",
       "discriminator": [
         195,
@@ -448,6 +502,93 @@ export type X12Matrix = {
           "type": "pubkey"
         }
       ]
+    },
+    {
+      "name": "purchaseWealthyClubAllInSimple",
+      "discriminator": [
+        60,
+        67,
+        149,
+        230,
+        242,
+        121,
+        196,
+        91
+      ],
+      "accounts": [
+        {
+          "name": "globalState",
+          "writable": true
+        },
+        {
+          "name": "sponsor",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "sponsorAccount",
+          "writable": true
+        },
+        {
+          "name": "sponsorToken",
+          "writable": true
+        },
+        {
+          "name": "downline"
+        },
+        {
+          "name": "downlineAccount",
+          "writable": true
+        },
+        {
+          "name": "wealthyClubAccount",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  119,
+                  101,
+                  97,
+                  108,
+                  116,
+                  104,
+                  121,
+                  95,
+                  99,
+                  108,
+                  117,
+                  98
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "downline"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow",
+          "writable": true
+        },
+        {
+          "name": "companyToken",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "tokenProgram"
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
     },
     {
       "name": "withdraw",
@@ -552,6 +693,19 @@ export type X12Matrix = {
     }
   ],
   "events": [
+    {
+      "name": "comboPackagePurchased",
+      "discriminator": [
+        212,
+        204,
+        222,
+        35,
+        147,
+        229,
+        198,
+        84
+      ]
+    },
     {
       "name": "diamondCompleted",
       "discriminator": [
@@ -663,9 +817,38 @@ export type X12Matrix = {
       "code": 6008,
       "name": "wealthyClubNotActivated",
       "msg": "Wealthy Club not activated"
+    },
+    {
+      "code": 6009,
+      "name": "alreadyPurchased",
+      "msg": "Combo package already purchased"
     }
   ],
   "types": [
+    {
+      "name": "comboPackagePurchased",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "packageType",
+            "type": "string"
+          },
+          {
+            "name": "totalCost",
+            "type": "u64"
+          },
+          {
+            "name": "levelsPurchased",
+            "type": "bytes"
+          }
+        ]
+      }
+    },
     {
       "name": "diamondCompleted",
       "type": {
@@ -829,6 +1012,23 @@ export type X12Matrix = {
             "type": {
               "array": [
                 "u32",
+                6
+              ]
+            }
+          },
+          {
+            "name": "hasAllInCombo",
+            "type": "bool"
+          },
+          {
+            "name": "hasWealthyClubCombo",
+            "type": "bool"
+          },
+          {
+            "name": "comboLevelsUsed",
+            "type": {
+              "array": [
+                "bool",
                 6
               ]
             }

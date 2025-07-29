@@ -373,6 +373,60 @@
       ]
     },
     {
+      "name": "purchase_all_in_matrix_simple",
+      "discriminator": [
+        46,
+        212,
+        40,
+        213,
+        9,
+        115,
+        127,
+        42
+      ],
+      "accounts": [
+        {
+          "name": "global_state",
+          "writable": true
+        },
+        {
+          "name": "sponsor",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "sponsor_account",
+          "writable": true
+        },
+        {
+          "name": "sponsor_token",
+          "writable": true
+        },
+        {
+          "name": "downline"
+        },
+        {
+          "name": "downline_account",
+          "writable": true
+        },
+        {
+          "name": "escrow",
+          "writable": true
+        },
+        {
+          "name": "company_token",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "purchase_level",
       "discriminator": [
         195,
@@ -442,6 +496,93 @@
           "type": "pubkey"
         }
       ]
+    },
+    {
+      "name": "purchase_wealthy_club_all_in_simple",
+      "discriminator": [
+        60,
+        67,
+        149,
+        230,
+        242,
+        121,
+        196,
+        91
+      ],
+      "accounts": [
+        {
+          "name": "global_state",
+          "writable": true
+        },
+        {
+          "name": "sponsor",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "sponsor_account",
+          "writable": true
+        },
+        {
+          "name": "sponsor_token",
+          "writable": true
+        },
+        {
+          "name": "downline"
+        },
+        {
+          "name": "downline_account",
+          "writable": true
+        },
+        {
+          "name": "wealthy_club_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  119,
+                  101,
+                  97,
+                  108,
+                  116,
+                  104,
+                  121,
+                  95,
+                  99,
+                  108,
+                  117,
+                  98
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "downline"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow",
+          "writable": true
+        },
+        {
+          "name": "company_token",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
     },
     {
       "name": "withdraw",
@@ -546,6 +687,19 @@
     }
   ],
   "events": [
+    {
+      "name": "ComboPackagePurchased",
+      "discriminator": [
+        212,
+        204,
+        222,
+        35,
+        147,
+        229,
+        198,
+        84
+      ]
+    },
     {
       "name": "DiamondCompleted",
       "discriminator": [
@@ -657,9 +811,38 @@
       "code": 6008,
       "name": "WealthyClubNotActivated",
       "msg": "Wealthy Club not activated"
+    },
+    {
+      "code": 6009,
+      "name": "AlreadyPurchased",
+      "msg": "Combo package already purchased"
     }
   ],
   "types": [
+    {
+      "name": "ComboPackagePurchased",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "package_type",
+            "type": "string"
+          },
+          {
+            "name": "total_cost",
+            "type": "u64"
+          },
+          {
+            "name": "levels_purchased",
+            "type": "bytes"
+          }
+        ]
+      }
+    },
     {
       "name": "DiamondCompleted",
       "type": {
@@ -823,6 +1006,23 @@
             "type": {
               "array": [
                 "u32",
+                6
+              ]
+            }
+          },
+          {
+            "name": "has_all_in_combo",
+            "type": "bool"
+          },
+          {
+            "name": "has_wealthy_club_combo",
+            "type": "bool"
+          },
+          {
+            "name": "combo_levels_used",
+            "type": {
+              "array": [
+                "bool",
                 6
               ]
             }

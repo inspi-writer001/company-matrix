@@ -158,7 +158,6 @@ pub fn purchase_level(
     level: u8,
     downline: Pubkey,
 ) -> Result<()> {
-    // Validate level
     require!(level <= 5, MatrixError::InvalidLevel);
     
     let prices = [
@@ -166,16 +165,40 @@ pub fn purchase_level(
     ];
     
     let entry_cost = prices[level as usize];
+    let mut payment_needed = true;
+
+    // Check if user has combo packages that cover this level
+    if level > 0 && level <= 5 {
+        if ctx.accounts.downline_account.has_all_in_combo && !ctx.accounts.downline_account.combo_levels_used[level as usize] {
+            payment_needed = false;
+            ctx.accounts.downline_account.combo_levels_used[level as usize] = true;
+        } else if ctx.accounts.downline_account.has_wealthy_club_combo && !ctx.accounts.downline_account.combo_levels_used[level as usize] {
+            payment_needed = false;
+            ctx.accounts.downline_account.combo_levels_used[level as usize] = true;
+        }
+    }
     
-    // Pay full entry cost
-    transfer_tokens(
-        &ctx.accounts.sponsor,
-        &ctx.accounts.sponsor_token,
-        &ctx.accounts.escrow,
-        &ctx.accounts.token_program,
-        &ctx.accounts.mint,
-        entry_cost,
-    )?;
+    // Only collect payment if not covered by combo
+    if payment_needed {
+        transfer_tokens(
+            &ctx.accounts.sponsor,
+            &ctx.accounts.sponsor_token,
+            &ctx.accounts.escrow,
+            &ctx.accounts.token_program,
+            &ctx.accounts.mint,
+            entry_cost,
+        )?;
+
+        // Send 50% to company (only for non-combo purchases)
+        transfer_to_company(
+            &ctx.accounts.escrow,
+            &ctx.accounts.company_token,
+            &ctx.accounts.token_program,
+            &ctx.accounts.mint,
+            entry_cost / 2,
+            ctx.accounts.global_state.escrow_bump,
+        )?;
+    }
 
     // For higher levels, user must already be active
     if level > 0 {
@@ -208,16 +231,6 @@ pub fn purchase_level(
 
     // Calculate parent for 2x2 matrix
     let parent_number = get_parent_position_2x2(position_number);
-
-    // Send 50% to company
-    transfer_to_company(
-        &ctx.accounts.escrow,
-        &ctx.accounts.company_token,
-        &ctx.accounts.token_program,
-        &ctx.accounts.mint,
-        entry_cost / 2,
-        ctx.accounts.global_state.escrow_bump,
-    )?;
 
     emit!(PositionCreated {
         owner: downline,
@@ -368,6 +381,107 @@ pub fn process_diamond_completion<'info>(
         user: ctx.accounts.user.key(),
         re_entries_created: 40,
         wealthy_club_payment: 12_000_000,
+    });
+
+    Ok(())
+}
+
+pub fn purchase_all_in_matrix_simple(ctx: Context<PurchaseComboSimple>) -> Result<()> {
+    require!(ctx.accounts.downline_account.is_active, MatrixError::NotActive);
+    require!(!ctx.accounts.downline_account.has_all_in_combo, MatrixError::AlreadyPurchased);
+
+    // Pay $62 upfront
+    transfer_tokens(
+        &ctx.accounts.sponsor,
+        &ctx.accounts.sponsor_token,
+        &ctx.accounts.escrow,
+        &ctx.accounts.token_program,
+        &ctx.accounts.mint,
+        62_000_000,
+    )?;
+
+    // Send 50% to company ($31)
+    transfer_to_company(
+        &ctx.accounts.escrow,
+        &ctx.accounts.company_token,
+        &ctx.accounts.token_program,
+        &ctx.accounts.mint,
+        31_000_000,
+        ctx.accounts.global_state.escrow_bump,
+    )?;
+
+    // Mark user as having purchased combo
+    ctx.accounts.downline_account.has_all_in_combo = true;
+    // Reset combo usage tracker (levels 1-5 available)
+    ctx.accounts.downline_account.combo_levels_used = [false, false, false, false, false, false];
+
+    emit!(ComboPackagePurchased {
+        owner: ctx.accounts.downline.key(),
+        package_type: "AllInMatrix".to_string(),
+        total_cost: 62_000_000,
+        levels_purchased: vec![1, 2, 3, 4, 5],
+    });
+
+    Ok(())
+}
+
+pub fn purchase_wealthy_club_all_in_simple(ctx: Context<PurchaseWealthyClubCombo>) -> Result<()> {
+    require!(ctx.accounts.downline_account.is_active, MatrixError::NotActive);
+    require!(!ctx.accounts.downline_account.has_wealthy_club_combo, MatrixError::AlreadyPurchased);
+
+    // Pay $74 upfront
+    transfer_tokens(
+        &ctx.accounts.sponsor,
+        &ctx.accounts.sponsor_token,
+        &ctx.accounts.escrow,
+        &ctx.accounts.token_program,
+        &ctx.accounts.mint,
+        74_000_000,
+    )?;
+
+    // Send 50% of matrix portion to company ($31)
+    transfer_to_company(
+        &ctx.accounts.escrow,
+        &ctx.accounts.company_token,
+        &ctx.accounts.token_program,
+        &ctx.accounts.mint,
+        31_000_000, // 50% of $62 matrix portion
+        ctx.accounts.global_state.escrow_bump,
+    )?;
+
+    // Mark user as having purchased combo
+    ctx.accounts.downline_account.has_wealthy_club_combo = true;
+    ctx.accounts.downline_account.combo_levels_used = [false, false, false, false, false, false];
+
+    // Activate Wealthy Club
+    let wealthy_club = &mut ctx.accounts.wealthy_club_account;
+    require!(!wealthy_club.is_activated, MatrixError::AlreadyActivated);
+
+    let clock = Clock::get()?;
+    let state = &mut ctx.accounts.global_state;
+    
+    wealthy_club.owner = ctx.accounts.downline.key();
+    wealthy_club.sponsor = ctx.accounts.sponsor.key();
+    wealthy_club.is_activated = true;
+    wealthy_club.position_number = state.wealthy_club_total_members + 1;
+    wealthy_club.total_earned = 0;
+    wealthy_club.joined_at = clock.unix_timestamp;
+    wealthy_club.activated_sponsor = ctx.accounts.sponsor.key();
+
+    state.wealthy_club_total_members += 1;
+    state.wealthy_club_active_members += 1;
+
+    emit!(ComboPackagePurchased {
+        owner: ctx.accounts.downline.key(),
+        package_type: "WealthyClubAllIn".to_string(),
+        total_cost: 74_000_000,
+        levels_purchased: vec![1, 2, 3, 4, 5],
+    });
+
+    emit!(WealthyClubActivated {
+        user: ctx.accounts.downline.key(),
+        position_number: wealthy_club.position_number,
+        activated_sponsor: wealthy_club.activated_sponsor,
     });
 
     Ok(())
@@ -672,6 +786,76 @@ pub struct ActivateWealthyClub<'info> {
 }
 
 #[derive(Accounts)]
+pub struct PurchaseComboSimple<'info> {
+    #[account(mut)]
+    pub global_state: Account<'info, GlobalState>,
+
+    #[account(mut)]
+    pub sponsor: Signer<'info>,
+
+    #[account(mut)]
+    pub sponsor_account: Account<'info, UserAccount>,
+
+    #[account(mut)]
+    pub sponsor_token: InterfaceAccount<'info, TokenAccount>,
+
+    /// CHECK: Downline
+    pub downline: UncheckedAccount<'info>,
+
+    #[account(mut)]
+    pub downline_account: Account<'info, UserAccount>,
+
+    #[account(mut)]
+    pub escrow: InterfaceAccount<'info, TokenAccount>,
+
+    #[account(mut)]
+    pub company_token: InterfaceAccount<'info, TokenAccount>,
+
+    pub mint: InterfaceAccount<'info, Mint>,
+    pub token_program: Interface<'info, TokenInterface>,
+}
+
+#[derive(Accounts)]
+pub struct PurchaseWealthyClubCombo<'info> {
+    #[account(mut)]
+    pub global_state: Account<'info, GlobalState>,
+
+    #[account(mut)]
+    pub sponsor: Signer<'info>,
+
+    #[account(mut)]
+    pub sponsor_account: Account<'info, UserAccount>,
+
+    #[account(mut)]
+    pub sponsor_token: InterfaceAccount<'info, TokenAccount>,
+
+    /// CHECK: Downline
+    pub downline: UncheckedAccount<'info>,
+
+    #[account(mut)]
+    pub downline_account: Account<'info, UserAccount>,
+
+    #[account(
+        init_if_needed,
+        payer = sponsor,
+        space = 8 + WealthyClubAccount::INIT_SPACE,
+        seeds = [b"wealthy_club", downline.key().as_ref()],
+        bump
+    )]
+    pub wealthy_club_account: Account<'info, WealthyClubAccount>,
+
+    #[account(mut)]
+    pub escrow: InterfaceAccount<'info, TokenAccount>,
+
+    #[account(mut)]
+    pub company_token: InterfaceAccount<'info, TokenAccount>,
+
+    pub mint: InterfaceAccount<'info, Mint>,
+    pub token_program: Interface<'info, TokenInterface>,
+    pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
 pub struct ProcessDiamondCompletion<'info> {
     #[account(mut)]
     pub global_state: Account<'info, GlobalState>,
@@ -718,6 +902,10 @@ pub struct UserAccount {
     pub available_balance: u64,
     pub reserve_balance: u64,
     pub positions_count: [u32; 6],
+
+    pub has_all_in_combo: bool,
+    pub has_wealthy_club_combo: bool,
+    pub combo_levels_used: [bool; 6], // Track which combo levels have been claimed
 }
 
 #[derive(InitSpace)]
@@ -777,6 +965,8 @@ pub enum MatrixError {
     AlreadyActivated,
     #[msg("Wealthy Club not activated")]
     WealthyClubNotActivated,
+    #[msg("Combo package already purchased")]
+    AlreadyPurchased,
 }
 
 
@@ -800,4 +990,12 @@ pub struct WealthyClubPayment {
     pub amount: u64,
     pub level: u8,
     pub from_user: Pubkey,
+}
+
+#[event]
+pub struct ComboPackagePurchased {
+    pub owner: Pubkey,
+    pub package_type: String,
+    pub total_cost: u64,
+    pub levels_purchased: Vec<u8>,
 }
