@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.devnet]
-x12_matrix = "HdAGWMfX7Y5ykkh815A464NQffNKfXj1papBwJyMLzbw"
+x12_matrix = "FYnywpVE3XS8CcZboetM8RL3A3gJfTzY4PwwGRVU9GnZ"
 
 [registry]
 url = "https://api.apr.dev"

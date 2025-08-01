@@ -1,4 +1,4 @@
-import { X2Matrix } from "../target/types/x2_matrix";
+import { X12Matrix } from "../target/types/x12_matrix";
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import {
@@ -6,6 +6,7 @@ import {
   TOKEN_PROGRAM_ID
 } from "@solana/spl-token";
 anchor.setProvider(anchor.AnchorProvider.env());
+import authority_wallet_file from "./wallets/authority-wallet.json";
 
 const company_Wallet = new anchor.web3.PublicKey(
   "4ibWj1JrU9UPvKGeHN1PCuWQs6wLCsA5DM7YkQ3WUzmy"
@@ -15,13 +16,22 @@ const token_mint = new anchor.web3.PublicKey(
   "6mWfrWzYf5ot4S8Bti5SCDRnZWA5ABPH1SNkSq4mNN1C"
 );
 
-const program = anchor.workspace.x2Matrix as Program<X2Matrix>;
+const authority_wallet = anchor.web3.Keypair.fromSecretKey(
+  new Uint8Array(authority_wallet_file)
+);
+
+const program = anchor.workspace.x12Matrix as Program<X12Matrix>;
 
 const [global_state_pda, _bump_global_state] =
   anchor.web3.PublicKey.findProgramAddressSync(
     [Buffer.from("global_state")],
     program.programId
   );
+
+const [escrow_pda, _bump_escrow] = anchor.web3.PublicKey.findProgramAddressSync(
+  [Buffer.from("escrow")],
+  program.programId
+);
 
 // Method 1: Fetch all UserAccounts and filter by sponsor
 const fetchDownlinesBySponsor = async (
@@ -335,7 +345,7 @@ const pifDownlineOpt = async (
         [
           Buffer.from("position"),
           new Uint8Array([level]), // Use target level
-          new anchor.BN(currentPositions).toArrayLike(Buffer, "le", 8)
+          new anchor.BN(currentPositions + 1).toArrayLike(Buffer, "le", 8) // TODO change + 1
         ],
         program.programId
       );
@@ -377,6 +387,70 @@ const pifDownlineOpt = async (
   }
 };
 
+async function pifDownline(
+  sponsor: anchor.web3.Keypair,
+  downline: anchor.web3.PublicKey,
+  name: string
+) {
+  const [downline_pda] = anchor.web3.PublicKey.findProgramAddressSync(
+    [Buffer.from("user"), downline.toBytes()],
+    program.programId
+  );
+
+  const [user_pda] = anchor.web3.PublicKey.findProgramAddressSync(
+    [Buffer.from("user"), sponsor.publicKey.toBytes()],
+    program.programId
+  );
+
+  const sponsorATA = await getOrCreateAssociatedTokenAccount(
+    anchor.getProvider().connection,
+    sponsor,
+    token_mint,
+    sponsor.publicKey
+  );
+
+  const companyATA = await getOrCreateAssociatedTokenAccount(
+    anchor.getProvider().connection,
+    authority_wallet,
+    token_mint,
+    company_Wallet
+  );
+
+  // Get current positions for PDA calculation
+  const globalState = await program.account.globalState.fetch(global_state_pda);
+  const currentPositions = globalState.totalPositions[0].toNumber();
+
+  const [position_record_pda] = anchor.web3.PublicKey.findProgramAddressSync(
+    [
+      Buffer.from("position"),
+      new Uint8Array([0]), // Silver level
+      new anchor.BN(currentPositions).toArrayLike(Buffer, "le", 8)
+    ],
+    program.programId
+  );
+
+  const tx = await program.methods
+    .pifUser()
+    .signers([sponsor])
+    .accounts({
+      companyToken: companyATA.address,
+      downline: downline,
+      downlineAccount: downline_pda,
+      sponsorAccount: user_pda,
+      escrow: escrow_pda,
+      globalState: global_state_pda,
+      mint: token_mint,
+      sponsorToken: sponsorATA.address,
+      positionRecord: position_record_pda,
+      sponsor: sponsor.publicKey,
+      tokenProgram: TOKEN_PROGRAM_ID
+    })
+    .rpc();
+
+  console.log(`✅ ${name} PIF completed: ${tx.substring(0, 8)}...`);
+  return tx;
+}
+
 // Helper function to PIF at specific level
 const pifDownlineAtLevel = async (
   sponsor: anchor.web3.Keypair,
@@ -403,11 +477,235 @@ const getLevelCapacity = async () => {
   });
 };
 
+async function purchaseLevel(
+  sponsor: anchor.web3.Keypair,
+  downline: anchor.web3.PublicKey,
+  level: number,
+  levelName: string
+) {
+  const [downline_pda] = anchor.web3.PublicKey.findProgramAddressSync(
+    [Buffer.from("user"), downline.toBytes()],
+    program.programId
+  );
+
+  const [user_pda] = anchor.web3.PublicKey.findProgramAddressSync(
+    [Buffer.from("user"), sponsor.publicKey.toBytes()],
+    program.programId
+  );
+
+  const sponsorATA = await getOrCreateAssociatedTokenAccount(
+    anchor.getProvider().connection,
+    sponsor,
+    token_mint,
+    sponsor.publicKey
+  );
+
+  const companyATA = await getOrCreateAssociatedTokenAccount(
+    anchor.getProvider().connection,
+    authority_wallet,
+    token_mint,
+    company_Wallet
+  );
+
+  const globalState = await program.account.globalState.fetch(global_state_pda);
+  const currentPositions = globalState.totalPositions[level].toNumber() + 1;
+
+  const [position_record_pda] = anchor.web3.PublicKey.findProgramAddressSync(
+    [
+      Buffer.from("position"),
+      new Uint8Array([level]),
+      new anchor.BN(currentPositions).toArrayLike(Buffer, "le", 8)
+    ],
+    program.programId
+  );
+
+  const tx = await program.methods
+    .purchaseLevel(level, downline)
+    .signers([sponsor])
+    .accounts({
+      companyToken: companyATA.address,
+      downline: downline,
+      downlineAccount: downline_pda,
+      sponsorAccount: user_pda,
+      escrow: escrow_pda,
+      globalState: global_state_pda,
+      mint: token_mint,
+      sponsorToken: sponsorATA.address,
+      positionRecord: position_record_pda,
+      sponsor: sponsor.publicKey,
+      tokenProgram: TOKEN_PROGRAM_ID
+    })
+    .rpc();
+
+  console.log(`✅ ${levelName} level purchased: ${tx.substring(0, 8)}...`);
+  return tx;
+}
+
+async function activateWealthyClub(
+  user: anchor.web3.Keypair,
+  sponsor?: anchor.web3.PublicKey
+) {
+  const userATA = await getOrCreateAssociatedTokenAccount(
+    anchor.getProvider().connection,
+    user,
+    token_mint,
+    user.publicKey
+  );
+
+  const tx = await program.methods
+    .activateWealthyClub(sponsor || null)
+    .signers([user])
+    .accounts({
+      user: user.publicKey,
+      userToken: userATA.address,
+      escrow: escrow_pda,
+      mint: token_mint,
+      tokenProgram: TOKEN_PROGRAM_ID,
+      globalState: global_state_pda
+    })
+    .rpc();
+
+  return tx;
+}
+
+async function purchaseAllInMatrix(
+  sponsor: anchor.web3.Keypair,
+  downline: anchor.web3.PublicKey
+) {
+  const [downline_pda] = anchor.web3.PublicKey.findProgramAddressSync(
+    [Buffer.from("user"), downline.toBytes()],
+    program.programId
+  );
+
+  const [user_pda] = anchor.web3.PublicKey.findProgramAddressSync(
+    [Buffer.from("user"), sponsor.publicKey.toBytes()],
+    program.programId
+  );
+
+  const sponsorATA = await getOrCreateAssociatedTokenAccount(
+    anchor.getProvider().connection,
+    sponsor,
+    token_mint,
+    sponsor.publicKey
+  );
+
+  const companyATA = await getOrCreateAssociatedTokenAccount(
+    anchor.getProvider().connection,
+    authority_wallet,
+    token_mint,
+    company_Wallet
+  );
+
+  const tx = await program.methods
+    .purchaseAllInMatrixSimple()
+    .signers([sponsor])
+    .accounts({
+      sponsor: sponsor.publicKey,
+      downline: downline,
+      downlineAccount: downline_pda,
+      sponsorAccount: user_pda,
+      sponsorToken: sponsorATA.address,
+      escrow: escrow_pda,
+      companyToken: companyATA.address,
+      mint: token_mint,
+      tokenProgram: TOKEN_PROGRAM_ID,
+      globalState: global_state_pda
+    })
+    .rpc();
+
+  return tx;
+}
+
+async function purchaseWealthyClubAllIn(
+  sponsor: anchor.web3.Keypair,
+  downline: anchor.web3.PublicKey,
+  wealthySponsor: anchor.web3.PublicKey
+) {
+  const [downline_pda] = anchor.web3.PublicKey.findProgramAddressSync(
+    [Buffer.from("user"), downline.toBytes()],
+    program.programId
+  );
+
+  const [user_pda] = anchor.web3.PublicKey.findProgramAddressSync(
+    [Buffer.from("user"), sponsor.publicKey.toBytes()],
+    program.programId
+  );
+
+  const sponsorATA = await getOrCreateAssociatedTokenAccount(
+    anchor.getProvider().connection,
+    sponsor,
+    token_mint,
+    sponsor.publicKey
+  );
+
+  const companyATA = await getOrCreateAssociatedTokenAccount(
+    anchor.getProvider().connection,
+    authority_wallet,
+    token_mint,
+    company_Wallet
+  );
+
+  const tx = await program.methods
+    .purchaseWealthyClubAllInSimple()
+    .signers([sponsor])
+    .accounts({
+      sponsor: sponsor.publicKey,
+      downline: downline,
+      downlineAccount: downline_pda,
+      sponsorAccount: user_pda,
+      sponsorToken: sponsorATA.address,
+      escrow: escrow_pda,
+      companyToken: companyATA.address,
+      mint: token_mint,
+      tokenProgram: TOKEN_PROGRAM_ID,
+      globalState: global_state_pda
+    })
+    .rpc();
+
+  return tx;
+}
+
+async function withdraw(user: anchor.web3.Keypair, amount: number) {
+  const [user_pda] = anchor.web3.PublicKey.findProgramAddressSync(
+    [Buffer.from("user"), user.publicKey.toBytes()],
+    program.programId
+  );
+
+  const userATA = await getOrCreateAssociatedTokenAccount(
+    anchor.getProvider().connection,
+    user,
+    token_mint,
+    user.publicKey
+  );
+
+  const tx = await program.methods
+    .withdraw(new anchor.BN(amount))
+    .signers([user])
+    .accounts({
+      user: user.publicKey,
+      userAccount: user_pda,
+      userToken: userATA.address,
+      escrow: escrow_pda,
+      mint: token_mint,
+      tokenProgram: TOKEN_PROGRAM_ID,
+      globalState: global_state_pda
+    })
+    .rpc();
+
+  return tx;
+}
+
 export {
   fetchDownlinesBySponsor,
   fetchDownlinesOptimized,
   fetchDownlinesWithPositions,
   getTeamStatistics,
   fetchFullTeamStructure,
-  pifDownlineOpt
+  // pifDownlineOpt,
+  pifDownline,
+  purchaseLevel,
+  activateWealthyClub,
+  withdraw,
+  purchaseAllInMatrix,
+  purchaseWealthyClubAllIn
 };

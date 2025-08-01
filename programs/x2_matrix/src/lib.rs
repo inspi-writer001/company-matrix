@@ -2,7 +2,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token_interface::{self, Mint, TokenAccount, TokenInterface, TransferChecked};
 
-declare_id!("HdAGWMfX7Y5ykkh815A464NQffNKfXj1papBwJyMLzbw");
+declare_id!("FYnywpVE3XS8CcZboetM8RL3A3gJfTzY4PwwGRVU9GnZ");
 
 #[program]
 pub mod x12_matrix {
@@ -49,6 +49,7 @@ pub mod x12_matrix {
         )?;
 
         assert!(!ctx.accounts.downline_account.is_active, "User already belongs to a team");
+        // assert!(ctx.accounts.downline_account.key() != ctx.accounts.sponsor.key(), "You can't register yourself under you");
 
         // Activate user
         ctx.accounts.downline_account.is_active = true;
