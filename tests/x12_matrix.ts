@@ -22,6 +22,8 @@ import user10ii_wallet_file from "./wallets/user-10ii-wallet.json";
 
 import {
   activateWealthyClub,
+  analyzeUserPlan,
+  displayUserAnalysis,
   fetchDownlinesBySponsor,
   fetchFullTeamStructure,
   pifDownline,
@@ -68,6 +70,14 @@ const user9ii_wallet = anchor.web3.Keypair.fromSecretKey(
 const user10ii_wallet = anchor.web3.Keypair.fromSecretKey(
   new Uint8Array(user10ii_wallet_file)
 );
+
+const users = [
+  { wallet: user1_wallet, name: "User1 (Basic)" },
+  { wallet: user2_wallet, name: "User2 (All-In Matrix)" },
+  { wallet: user3_wallet, name: "User3 (Wealthy Club All-In)" },
+  { wallet: user4_wallet, name: "User4 (Individual Purchases)" },
+  { wallet: user5_wallet, name: "User5 (Inactive)" }
+];
 
 const company_Wallet = new anchor.web3.PublicKey(
   "4ibWj1JrU9UPvKGeHN1PCuWQs6wLCsA5DM7YkQ3WUzmy"
@@ -315,7 +325,7 @@ describe("x12_matrix", () => {
     }
   });
 
-  it.only("8. Should handle withdrawal attempts", async () => {
+  it("8. Should handle withdrawal attempts", async () => {
     console.log("=== Test 8: Withdrawal Tests ===");
 
     try {
@@ -353,7 +363,7 @@ describe("x12_matrix", () => {
     }
   });
 
-  it.skip("should fetch direct downlines for user1", async () => {
+  it("should fetch direct downlines for user1", async () => {
     console.log("=== Fetching user1's direct downlines ===");
 
     // const downlines = await fetchDownlinesBySponsor(user1_wallet.publicKey);
@@ -412,6 +422,20 @@ describe("x12_matrix", () => {
         );
       });
     });
+  });
+
+  it.only("Should analyze user plans and show comprehensive status", async () => {
+    console.log("=== 📊 USER PLAN ANALYSIS REPORT ===\n");
+
+    for (const user of users) {
+      try {
+        const analysis = await analyzeUserPlan(user.wallet.publicKey);
+        displayUserAnalysis(user.name, analysis);
+        console.log("─".repeat(80));
+      } catch (error) {
+        console.log(`❌ Error analyzing ${user.name}: ${error.message}\n`);
+      }
+    }
   });
 
   // it("should withdraw from user earnings", async () => {

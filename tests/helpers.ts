@@ -695,11 +695,217 @@ async function withdraw(user: anchor.web3.Keypair, amount: number) {
   return tx;
 }
 
+async function analyzeUserPlan(
+  userPublicKey: anchor.web3.PublicKey
+): Promise<UserPlanAnalysis> {
+  // Get user account
+  const [userPda] = anchor.web3.PublicKey.findProgramAddressSync(
+    [Buffer.from("user"), userPublicKey.toBytes()],
+    program.programId
+  );
+
+  let userAccount;
+  try {
+    userAccount = await program.account.userAccount.fetch(userPda);
+  } catch (error) {
+    throw new Error("User account not found - user never registered");
+  }
+
+  // Get wealthy club account (if exists)
+  const [wealthyClubPda] = anchor.web3.PublicKey.findProgramAddressSync(
+    [Buffer.from("wealthy_club"), userPublicKey.toBytes()],
+    program.programId
+  );
+
+  let wealthyClubAccount = null;
+  try {
+    wealthyClubAccount = await program.account.wealthyClubAccount.fetch(
+      wealthyClubPda
+    );
+  } catch (error) {
+    // Wealthy club account doesn't exist
+  }
+
+  // Analyze the data
+  return {
+    // Basic Info
+    isRegistered: true,
+    isActive: userAccount.isActive,
+    registeredAt: new Date(userAccount.registeredAt.toNumber() * 1000),
+    sponsor: userAccount.sponsor,
+
+    // Financial Info
+    totalEarnings: userAccount.totalEarnings.toNumber() / 1_000_000, // Convert to USD
+    availableBalance: userAccount.availableBalance.toNumber() / 1_000_000,
+    reserveBalance: userAccount.reserveBalance.toNumber() / 1_000_000,
+
+    // Team Info
+    pifCount: userAccount.pifCount,
+    canWithdraw:
+      userAccount.pifCount >= 2 && userAccount.availableBalance.toNumber() > 0,
+
+    // Level Positions
+    positionsCount: Array.from(userAccount.positionsCount).map((pos) => pos),
+    activeLevels: Array.from(userAccount.positionsCount)
+      .map((count, level) => ({ level, count }))
+      .filter(({ count }) => count > 0),
+
+    // Combo Packages
+    hasAllInCombo: userAccount.hasAllInCombo,
+    hasWealthyClubCombo: userAccount.hasWealthyClubCombo,
+    comboLevelsUsed: Array.from(userAccount.comboLevelsUsed),
+
+    // Wealthy Club
+    wealthyClubActivated: wealthyClubAccount?.isActivated || false,
+    wealthyClubPosition: wealthyClubAccount?.positionNumber.toNumber() || 0,
+    wealthyClubEarnings:
+      wealthyClubAccount?.totalEarned.toNumber() / 1_000_000 || 0,
+    wealthyClubSponsor: wealthyClubAccount?.sponsor || null,
+
+    // Plan Classification
+    planType: classifyUserPlan(userAccount, wealthyClubAccount),
+    totalInvestment: calculateTotalInvestment(userAccount, wealthyClubAccount),
+    potentialEarnings: calculatePotentialEarnings(userAccount)
+  };
+}
+
+function classifyUserPlan(userAccount: any, wealthyClubAccount: any): string {
+  if (!userAccount.isActive) return "Inactive (Not PIF'd)";
+
+  if (userAccount.hasWealthyClubCombo) return "Wealthy Club All-In ($74)";
+  if (userAccount.hasAllInCombo) return "All-In Matrix ($62)";
+
+  const activeLevels = userAccount.positionsCount.filter(
+    (count: number) => count > 0
+  ).length;
+  const hasWealthyClub = wealthyClubAccount?.isActivated || false;
+
+  if (activeLevels === 1 && !hasWealthyClub) return "Basic Silver ($1)";
+  if (activeLevels > 1 && hasWealthyClub)
+    return `Individual Levels + Wealthy Club`;
+  if (activeLevels > 1) return `Individual Levels (${activeLevels} levels)`;
+  if (hasWealthyClub) return "Silver + Wealthy Club";
+
+  return "Custom Plan";
+}
+
+function calculateTotalInvestment(
+  userAccount: any,
+  wealthyClubAccount: any
+): number {
+  let total = 0;
+
+  // Combo packages
+  if (userAccount.hasWealthyClubCombo) return 74;
+  if (userAccount.hasAllInCombo) return 62;
+
+  // Individual level costs
+  const levelCosts = [1, 2, 4, 8, 16, 32]; // Silver, Gold, Sapphire, Emerald, Platinum, Diamond
+  userAccount.positionsCount.forEach((count: number, level: number) => {
+    if (count > 0) {
+      total += levelCosts[level];
+    }
+  });
+
+  // Wealthy Club
+  if (wealthyClubAccount?.isActivated) {
+    total += 12;
+  }
+
+  return total;
+}
+
+function calculatePotentialEarnings(userAccount: any): number {
+  const levelEarnings = [2, 4, 8, 16, 32, 64]; // Max earnings per level completion
+  let potential = 0;
+
+  userAccount.positionsCount.forEach((count: number, level: number) => {
+    potential += count * levelEarnings[level];
+  });
+
+  return potential;
+}
+
+function displayUserAnalysis(userName: string, analysis: UserPlanAnalysis) {
+  console.log(`👤 ${userName.toUpperCase()}`);
+  console.log(`📅 Registered: ${analysis.registeredAt.toLocaleDateString()}`);
+  console.log(`🎯 Plan Type: ${analysis.planType}`);
+  console.log(`💰 Total Investment: $${analysis.totalInvestment}`);
+  console.log(`📈 Status: ${analysis.isActive ? "✅ Active" : "❌ Inactive"}`);
+
+  if (analysis.isActive) {
+    console.log(
+      `👥 PIF Count: ${analysis.pifCount} (${
+        analysis.canWithdraw ? "✅ Can Withdraw" : "❌ Cannot Withdraw"
+      })`
+    );
+    console.log(
+      `💵 Available Balance: $${analysis.availableBalance.toFixed(2)}`
+    );
+    console.log(`🏦 Reserve Balance: $${analysis.reserveBalance.toFixed(2)}`);
+    console.log(`📊 Total Earnings: $${analysis.totalEarnings.toFixed(2)}`);
+
+    // Show active levels
+    if (analysis.activeLevels.length > 0) {
+      console.log(`🎮 Active Levels:`);
+      const levelNames = [
+        "Silver",
+        "Gold",
+        "Sapphire",
+        "Emerald",
+        "Platinum",
+        "Diamond"
+      ];
+      analysis.activeLevels.forEach(({ level, count }) => {
+        console.log(`   ${levelNames[level]}: ${count} positions`);
+      });
+    }
+
+    // Show combo packages
+    if (analysis.hasAllInCombo || analysis.hasWealthyClubCombo) {
+      console.log(`🎁 Combo Packages:`);
+      if (analysis.hasWealthyClubCombo)
+        console.log(`   ✅ Wealthy Club All-In ($74)`);
+      else if (analysis.hasAllInCombo) console.log(`   ✅ All-In Matrix ($62)`);
+
+      const unusedLevels = analysis.comboLevelsUsed
+        .map((used, index) => ({ index, used }))
+        .filter(({ used }) => !used)
+        .map(
+          ({ index }) =>
+            ["Silver", "Gold", "Sapphire", "Emerald", "Platinum", "Diamond"][
+              index
+            ]
+        );
+
+      if (unusedLevels.length > 0) {
+        console.log(`   🎯 Unused Levels: ${unusedLevels.join(", ")}`);
+      }
+    }
+
+    // Show Wealthy Club status
+    if (analysis.wealthyClubActivated) {
+      console.log(
+        `🏆 Wealthy Club: Position #${
+          analysis.wealthyClubPosition
+        } (Earned: $${analysis.wealthyClubEarnings.toFixed(2)})`
+      );
+    }
+
+    console.log(
+      `🎲 Potential Earnings: $${analysis.potentialEarnings} (if all matrices complete)`
+    );
+  }
+
+  console.log();
+}
+
 export {
   fetchDownlinesBySponsor,
   fetchDownlinesOptimized,
   fetchDownlinesWithPositions,
   getTeamStatistics,
+  analyzeUserPlan,
   fetchFullTeamStructure,
   // pifDownlineOpt,
   pifDownline,
@@ -707,5 +913,30 @@ export {
   activateWealthyClub,
   withdraw,
   purchaseAllInMatrix,
-  purchaseWealthyClubAllIn
+  purchaseWealthyClubAllIn,
+  displayUserAnalysis
 };
+
+interface UserPlanAnalysis {
+  isRegistered: boolean;
+  isActive: boolean;
+  registeredAt: Date;
+  sponsor: anchor.web3.PublicKey;
+  totalEarnings: number;
+  availableBalance: number;
+  reserveBalance: number;
+  pifCount: number;
+  canWithdraw: boolean;
+  positionsCount: number[];
+  activeLevels: { level: number; count: number }[];
+  hasAllInCombo: boolean;
+  hasWealthyClubCombo: boolean;
+  comboLevelsUsed: boolean[];
+  wealthyClubActivated: boolean;
+  wealthyClubPosition: number;
+  wealthyClubEarnings: number;
+  wealthyClubSponsor: anchor.web3.PublicKey | null;
+  planType: string;
+  totalInvestment: number;
+  potentialEarnings: number;
+}
