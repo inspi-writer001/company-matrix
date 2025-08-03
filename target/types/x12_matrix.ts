@@ -298,7 +298,24 @@ export type X12Matrix = {
         },
         {
           "name": "downlineAccount",
-          "writable": true
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "downline"
+              }
+            ]
+          }
         },
         {
           "name": "positionRecord",

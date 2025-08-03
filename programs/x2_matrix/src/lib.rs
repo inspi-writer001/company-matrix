@@ -655,7 +655,13 @@ pub struct PifUser<'info> {
     /// CHECK: Downline
     pub downline: UncheckedAccount<'info>,
 
-    #[account(mut)]
+    #[account(
+        init_if_needed,
+        payer = sponsor,
+        space = 8 + UserAccount::INIT_SPACE,
+        seeds = [b"user", downline.key().as_ref()],
+        bump
+    )]
     pub downline_account: Account<'info, UserAccount>,
 
     #[account(

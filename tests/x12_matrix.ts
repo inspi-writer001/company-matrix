@@ -146,15 +146,22 @@ describe("x12_matrix", () => {
   //   await pifDownlineOpt(user2_wallet, user10ii_wallet.publicKey);
   // });
 
-  it("3. Should PIF users and create positions", async () => {
+  it.only("3. Should PIF users and create positions", async () => {
     console.log("=== Test 3: PIF Users ===");
 
     try {
       // First level - User1 as root sponsor
       console.log("Creating first level positions...");
-      await pifDownline(user1_wallet, user1_wallet.publicKey, "User1 (self)");
-      await pifDownline(user1_wallet, user2_wallet.publicKey, "User2");
-      await pifDownline(user1_wallet, user3_wallet.publicKey, "User3");
+      // await pifDownline(user1_wallet, user1_wallet.publicKey, "User1 (self)");
+      // await pifDownline(user1_wallet, user2_wallet.publicKey, "User2");
+      // await pifDownline(user1_wallet, user3_wallet.publicKey, "User3");
+      await pifDownline(
+        user3_wallet,
+        new anchor.web3.PublicKey(
+          "FGCnoGW7ocihV46E1S9MRBC4mdzkgQQramQxN7Mr3s3m"
+        ),
+        "user 4"
+      );
 
       // Verify User1 has 2 PIFs now
       const [user1Pda] = anchor.web3.PublicKey.findProgramAddressSync(
@@ -424,7 +431,7 @@ describe("x12_matrix", () => {
     });
   });
 
-  it.only("Should analyze user plans and show comprehensive status", async () => {
+  it("Should analyze user plans and show comprehensive status", async () => {
     console.log("=== 📊 USER PLAN ANALYSIS REPORT ===\n");
 
     for (const user of users) {
