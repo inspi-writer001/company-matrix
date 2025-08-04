@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/x12_matrix.json`.
  */
 export type X12Matrix = {
-  "address": "96s7pJadvW6Cz1E64znq7DbpgExkJxDuB8s5yqE2eUy1",
+  "address": "652Yr5RgLD7Akm1THNdsfT3VD2i4wBuiUyqhXPk1Ty3j",
   "metadata": {
     "name": "x12Matrix",
     "version": "0.1.0",

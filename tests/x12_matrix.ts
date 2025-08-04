@@ -131,20 +131,20 @@ describe("x12_matrix", () => {
     await createUser(user10ii_wallet);
   });
 
-  // it.skip("should pif downline account", async () => {
-  //   // FIRST LEVEL
-  //   await pifDownline(user1_wallet, user1_wallet.publicKey);
-  //   await pifDownline(user1_wallet, user2_wallet.publicKey);
-  //   await pifDownline(user1_wallet, user3_wallet.publicKey);
-  //   await pifDownline(user1_wallet, user4_wallet.publicKey);
-  //   await pifDownline(user1_wallet, user5_wallet.publicKey);
-  //   await pifDownline(user1_wallet, user6_wallet.publicKey);
-  //   await pifDownline(user1_wallet, user7_wallet.publicKey);
-  //   // SECOND LEVEL
-  //   await pifDownlineOpt(user2_wallet, user8ii_wallet.publicKey);
-  //   await pifDownlineOpt(user2_wallet, user9ii_wallet.publicKey);
-  //   await pifDownlineOpt(user2_wallet, user10ii_wallet.publicKey);
-  // });
+  it("should pif downline account", async () => {
+    // FIRST LEVEL
+    // await pifDownline(user1_wallet, user1_wallet.publicKey);
+    // await pifDownline(user1_wallet, user2_wallet.publicKey);
+    // await pifDownline(user1_wallet, user3_wallet.publicKey);
+    // await pifDownline(user1_wallet, user4_wallet.publicKey);
+    // await pifDownline(user1_wallet, user5_wallet.publicKey);
+    // await pifDownline(user1_wallet, user6_wallet.publicKey);
+    // await pifDownline(user1_wallet, user7_wallet.publicKey);
+    // // SECOND LEVEL
+    // await pifDownlineOpt(user2_wallet, user8ii_wallet.publicKey);
+    // await pifDownlineOpt(user2_wallet, user9ii_wallet.publicKey);
+    await pifDownline(user1_wallet, user10ii_wallet.publicKey, "User 10");
+  });
 
   it("3. Should PIF users and create positions", async () => {
     console.log("=== Test 3: PIF Users ===");
@@ -402,7 +402,7 @@ describe("x12_matrix", () => {
     });
   });
 
-  it("should fetch full team structure for user1", async () => {
+  it.only("should fetch full team structure for user1", async () => {
     console.log("=== Fetching user1's full team structure ===");
 
     const teamStructure = await fetchFullTeamStructure(
