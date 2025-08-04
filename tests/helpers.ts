@@ -360,7 +360,7 @@ const pifDownlineOpt = async (
       .accounts({
         companyToken: companyATA.address,
         downline: downline,
-        // downlineAccount: downline_pda,
+        downlineAccount: downline_pda,
         sponsorAccount: user_pda,
         escrow: escrow_pda,
         globalState: global_state_pda,
@@ -435,7 +435,7 @@ async function pifDownline(
     .accounts({
       companyToken: companyATA.address,
       downline: downline,
-      // downlineAccount: downline_pda,
+      downlineAccount: downline_pda,
       sponsorAccount: user_pda,
       escrow: escrow_pda,
       globalState: global_state_pda,

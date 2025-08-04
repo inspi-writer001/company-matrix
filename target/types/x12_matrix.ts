@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/x12_matrix.json`.
  */
 export type X12Matrix = {
-  "address": "FYnywpVE3XS8CcZboetM8RL3A3gJfTzY4PwwGRVU9GnZ",
+  "address": "96s7pJadvW6Cz1E64znq7DbpgExkJxDuB8s5yqE2eUy1",
   "metadata": {
     "name": "x12Matrix",
     "version": "0.1.0",
@@ -298,24 +298,7 @@ export type X12Matrix = {
         },
         {
           "name": "downlineAccount",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  117,
-                  115,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "downline"
-              }
-            ]
-          }
+          "writable": true
         },
         {
           "name": "positionRecord",

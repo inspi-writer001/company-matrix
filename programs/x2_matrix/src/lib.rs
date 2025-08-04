@@ -2,7 +2,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token_interface::{self, Mint, TokenAccount, TokenInterface, TransferChecked};
 
-declare_id!("FYnywpVE3XS8CcZboetM8RL3A3gJfTzY4PwwGRVU9GnZ");
+declare_id!("96s7pJadvW6Cz1E64znq7DbpgExkJxDuB8s5yqE2eUy1");
 
 #[program]
 pub mod x12_matrix {
@@ -655,13 +655,7 @@ pub struct PifUser<'info> {
     /// CHECK: Downline
     pub downline: UncheckedAccount<'info>,
 
-    #[account(
-        init_if_needed,
-        payer = sponsor,
-        space = 8 + UserAccount::INIT_SPACE,
-        seeds = [b"user", downline.key().as_ref()],
-        bump
-    )]
+    #[account(mut)]
     pub downline_account: Account<'info, UserAccount>,
 
     #[account(

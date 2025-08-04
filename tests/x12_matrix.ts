@@ -146,22 +146,15 @@ describe("x12_matrix", () => {
   //   await pifDownlineOpt(user2_wallet, user10ii_wallet.publicKey);
   // });
 
-  it.only("3. Should PIF users and create positions", async () => {
+  it("3. Should PIF users and create positions", async () => {
     console.log("=== Test 3: PIF Users ===");
 
     try {
       // First level - User1 as root sponsor
       console.log("Creating first level positions...");
-      // await pifDownline(user1_wallet, user1_wallet.publicKey, "User1 (self)");
-      // await pifDownline(user1_wallet, user2_wallet.publicKey, "User2");
-      // await pifDownline(user1_wallet, user3_wallet.publicKey, "User3");
-      await pifDownline(
-        user3_wallet,
-        new anchor.web3.PublicKey(
-          "FGCnoGW7ocihV46E1S9MRBC4mdzkgQQramQxN7Mr3s3m"
-        ),
-        "user 4"
-      );
+      await pifDownline(user1_wallet, user1_wallet.publicKey, "User1 (self)");
+      await pifDownline(user1_wallet, user2_wallet.publicKey, "User2");
+      await pifDownline(user1_wallet, user3_wallet.publicKey, "User3");
 
       // Verify User1 has 2 PIFs now
       const [user1Pda] = anchor.web3.PublicKey.findProgramAddressSync(
@@ -185,6 +178,9 @@ describe("x12_matrix", () => {
       const user2Account = await program.account.userAccount.fetch(user2Pda);
       expect(user2Account.pifCount).to.equal(2);
       console.log(`✅ User2 PIF count: ${user2Account.pifCount}`);
+
+      await pifDownline(user3_wallet, user6_wallet.publicKey, "User6");
+      await pifDownline(user3_wallet, user7_wallet.publicKey, "User7");
     } catch (error) {
       console.log("Error during PIF:", error);
       if (error.logs) console.log("Program logs:", error.logs);
@@ -373,8 +369,12 @@ describe("x12_matrix", () => {
   it("should fetch direct downlines for user1", async () => {
     console.log("=== Fetching user1's direct downlines ===");
 
-    // const downlines = await fetchDownlinesBySponsor(user1_wallet.publicKey);
     const downlines = await fetchDownlinesBySponsor(user1_wallet.publicKey);
+    // const downlines = await fetchDownlinesBySponsor(
+    //   new anchor.web3.PublicKey("FGCnoGW7ocihV46E1S9MRBC4mdzkgQQramQxN7Mr3s3m")
+    // );
+
+    // const downlines = await fetchDownlinesBySponsor(user4_wallet.publicKey);
 
     console.log(`User1 has ${downlines.length} direct downlines:`);
     downlines.forEach((downline, index) => {
