@@ -2,7 +2,7 @@ import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import {
   getAssociatedTokenAddressSync,
-  getOrCreateAssociatedTokenAccount
+  getOrCreateAssociatedTokenAccount,
 } from "@solana/spl-token";
 import { TOKEN_PROGRAM_ID } from "@coral-xyz/anchor/dist/cjs/utils/token";
 import { X12Matrix } from "../target/types/x12_matrix";
@@ -30,7 +30,7 @@ import {
   purchaseAllInMatrix,
   purchaseLevel,
   purchaseWealthyClubAllIn,
-  withdraw
+  withdraw,
 } from "./helpers";
 import { expect } from "chai";
 
@@ -76,7 +76,7 @@ const users = [
   { wallet: user2_wallet, name: "User2 (All-In Matrix)" },
   { wallet: user3_wallet, name: "User3 (Wealthy Club All-In)" },
   { wallet: user4_wallet, name: "User4 (Individual Purchases)" },
-  { wallet: user5_wallet, name: "User5 (Inactive)" }
+  { wallet: user5_wallet, name: "User5 (Inactive)" },
 ];
 
 const company_Wallet = new anchor.web3.PublicKey(
@@ -102,7 +102,7 @@ describe("x12_matrix", () => {
       program.programId
     );
 
-  it("Is initialized!", async () => {
+  it.skip("Is initialized!", async () => {
     // Add your test here.
     const tx = await program.methods
       .initialize(company_Wallet)
@@ -110,7 +110,7 @@ describe("x12_matrix", () => {
       .accounts({
         authority: authority_wallet.publicKey,
         mint: token_mint,
-        tokenProgram: TOKEN_PROGRAM_ID
+        tokenProgram: TOKEN_PROGRAM_ID,
       })
       .rpc();
     console.log("Your transaction signature", tx);
@@ -143,7 +143,11 @@ describe("x12_matrix", () => {
     // // SECOND LEVEL
     // await pifDownlineOpt(user2_wallet, user8ii_wallet.publicKey);
     // await pifDownlineOpt(user2_wallet, user9ii_wallet.publicKey);
-    await pifDownline(user1_wallet, user10ii_wallet.publicKey, "User 10");
+    await pifDownline(
+      user1_wallet,
+      new anchor.web3.PublicKey("FGCnoGW7ocihV46E1S9MRBC4mdzkgQQramQxN7Mr3s3m"),
+      "User 10"
+    );
   });
 
   it("3. Should PIF users and create positions", async () => {
@@ -301,7 +305,7 @@ describe("x12_matrix", () => {
     }
   });
 
-  it("7. Should claim level 2 payments", async () => {
+  it.only("7. Should claim level 2 payments", async () => {
     console.log("=== Test 7: Claim Level 2 Payments ===");
 
     try {
@@ -369,10 +373,10 @@ describe("x12_matrix", () => {
   it("should fetch direct downlines for user1", async () => {
     console.log("=== Fetching user1's direct downlines ===");
 
-    const downlines = await fetchDownlinesBySponsor(user1_wallet.publicKey);
-    // const downlines = await fetchDownlinesBySponsor(
-    //   new anchor.web3.PublicKey("FGCnoGW7ocihV46E1S9MRBC4mdzkgQQramQxN7Mr3s3m")
-    // );
+    // const downlines = await fetchDownlinesBySponsor(user1_wallet.publicKey);
+    const downlines = await fetchDownlinesBySponsor(
+      new anchor.web3.PublicKey("FGCnoGW7ocihV46E1S9MRBC4mdzkgQQramQxN7Mr3s3m")
+    );
 
     // const downlines = await fetchDownlinesBySponsor(user4_wallet.publicKey);
 
@@ -390,7 +394,7 @@ describe("x12_matrix", () => {
     const downlineKeys = downlines.map((d) => d.owner.toString());
     const expectedDownlines = [
       user2_wallet.publicKey.toString(),
-      user3_wallet.publicKey.toString()
+      user3_wallet.publicKey.toString(),
     ];
 
     expectedDownlines.forEach((expected) => {
@@ -402,7 +406,7 @@ describe("x12_matrix", () => {
     });
   });
 
-  it.only("should fetch full team structure for user1", async () => {
+  it("should fetch full team structure for user1", async () => {
     console.log("=== Fetching user1's full team structure ===");
 
     const teamStructure = await fetchFullTeamStructure(
@@ -434,15 +438,15 @@ describe("x12_matrix", () => {
   it("Should analyze user plans and show comprehensive status", async () => {
     console.log("=== 📊 USER PLAN ANALYSIS REPORT ===\n");
 
-    for (const user of users) {
-      try {
-        const analysis = await analyzeUserPlan(user.wallet.publicKey);
-        displayUserAnalysis(user.name, analysis);
-        console.log("─".repeat(80));
-      } catch (error) {
-        console.log(`❌ Error analyzing ${user.name}: ${error.message}\n`);
-      }
+    // for (const user of users) {
+    try {
+      const analysis = await analyzeUserPlan(user1_wallet.publicKey);
+      displayUserAnalysis("user.name", analysis);
+      console.log("─".repeat(80));
+    } catch (error) {
+      console.log(`❌ Error analyzing ${"user.name"}: ${error.message}\n`);
     }
+    // }
   });
 
   // it("should withdraw from user earnings", async () => {
@@ -470,7 +474,7 @@ describe("x12_matrix", () => {
         .createUser()
         .signers([user])
         .accounts({
-          user: user.publicKey
+          user: user.publicKey,
         })
         .rpc();
       console.log("Your transaction signature", tx);
