@@ -174,6 +174,74 @@
       "args": []
     },
     {
+      "name": "get_matrix_structure",
+      "discriminator": [
+        196,
+        98,
+        102,
+        75,
+        94,
+        188,
+        185,
+        246
+      ],
+      "accounts": [
+        {
+          "name": "global_state"
+        }
+      ],
+      "args": [
+        {
+          "name": "level",
+          "type": "u8"
+        },
+        {
+          "name": "start_position",
+          "type": "u64"
+        },
+        {
+          "name": "count",
+          "type": "u8"
+        }
+      ],
+      "returns": {
+        "vec": {
+          "defined": {
+            "name": "PositionInfo"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_user_positions",
+      "discriminator": [
+        93,
+        107,
+        21,
+        26,
+        85,
+        200,
+        212,
+        216
+      ],
+      "accounts": [
+        {
+          "name": "user_account"
+        }
+      ],
+      "args": [
+        {
+          "name": "user",
+          "type": "pubkey"
+        }
+      ],
+      "returns": {
+        "defined": {
+          "name": "UserPositionsSummary"
+        }
+      }
+    },
+    {
       "name": "initialize",
       "discriminator": [
         175,
@@ -320,16 +388,16 @@
       "args": []
     },
     {
-      "name": "process_diamond_completion",
+      "name": "process_diamond_completion_with_chain",
       "discriminator": [
-        27,
-        75,
-        97,
-        223,
+        32,
+        224,
+        55,
         144,
-        194,
-        226,
-        4
+        129,
+        107,
+        199,
+        227
       ],
       "accounts": [
         {
@@ -363,14 +431,7 @@
           "name": "token_program"
         }
       ],
-      "args": [
-        {
-          "name": "sponsor_chain",
-          "type": {
-            "vec": "pubkey"
-          }
-        }
-      ]
+      "args": []
     },
     {
       "name": "purchase_all_in_matrix_simple",
@@ -427,16 +488,16 @@
       "args": []
     },
     {
-      "name": "purchase_level",
+      "name": "purchase_level_with_distribution",
       "discriminator": [
-        195,
-        138,
-        91,
-        201,
-        82,
-        188,
-        84,
-        103
+        190,
+        241,
+        228,
+        223,
+        191,
+        71,
+        43,
+        148
       ],
       "accounts": [
         {
@@ -489,6 +550,77 @@
       "args": [
         {
           "name": "level",
+          "type": "u8"
+        },
+        {
+          "name": "downline",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "purchase_multiple_positions",
+      "discriminator": [
+        139,
+        48,
+        163,
+        41,
+        55,
+        186,
+        84,
+        198
+      ],
+      "accounts": [
+        {
+          "name": "global_state",
+          "writable": true
+        },
+        {
+          "name": "sponsor",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "sponsor_account",
+          "writable": true
+        },
+        {
+          "name": "sponsor_token",
+          "writable": true
+        },
+        {
+          "name": "downline"
+        },
+        {
+          "name": "downline_account",
+          "writable": true
+        },
+        {
+          "name": "escrow",
+          "writable": true
+        },
+        {
+          "name": "company_token",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "level",
+          "type": "u8"
+        },
+        {
+          "name": "quantity",
           "type": "u8"
         },
         {
@@ -779,43 +911,63 @@
     },
     {
       "code": 6002,
+      "name": "AlreadyActive",
+      "msg": "Already active"
+    },
+    {
+      "code": 6003,
       "name": "InsufficientBalance",
       "msg": "Insufficient balance"
     },
     {
-      "code": 6003,
+      "code": 6004,
       "name": "NeedTwoPifs",
       "msg": "Need 2 PIFs to withdraw"
     },
     {
-      "code": 6004,
+      "code": 6005,
       "name": "NotParent",
       "msg": "Not the parent position"
     },
     {
-      "code": 6005,
+      "code": 6006,
       "name": "NotOwner",
       "msg": "Not the owner"
     },
     {
-      "code": 6006,
+      "code": 6007,
       "name": "NotLevel2",
       "msg": "Not a Level 2 placement"
     },
     {
-      "code": 6007,
+      "code": 6008,
       "name": "AlreadyActivated",
       "msg": "Already activated"
     },
     {
-      "code": 6008,
+      "code": 6009,
       "name": "WealthyClubNotActivated",
       "msg": "Wealthy Club not activated"
     },
     {
-      "code": 6009,
+      "code": 6010,
       "name": "AlreadyPurchased",
       "msg": "Combo package already purchased"
+    },
+    {
+      "code": 6011,
+      "name": "InvalidQuantity",
+      "msg": "Invalid quantity"
+    },
+    {
+      "code": 6012,
+      "name": "MatrixFull",
+      "msg": "Matrix is full"
+    },
+    {
+      "code": 6013,
+      "name": "SelfRegister",
+      "msg": "Cannot register yourself"
     }
   ],
   "types": [
@@ -945,6 +1097,38 @@
       }
     },
     {
+      "name": "PositionInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "position_number",
+            "type": "u64"
+          },
+          {
+            "name": "parent_position",
+            "type": "u64"
+          },
+          {
+            "name": "left_child",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "right_child",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "is_complete",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
       "name": "PositionRecord",
       "type": {
         "kind": "struct",
@@ -1026,6 +1210,54 @@
                 6
               ]
             }
+          }
+        ]
+      }
+    },
+    {
+      "name": "UserPositionsSummary",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "silver_positions",
+            "type": "u32"
+          },
+          {
+            "name": "gold_positions",
+            "type": "u32"
+          },
+          {
+            "name": "sapphire_positions",
+            "type": "u32"
+          },
+          {
+            "name": "emerald_positions",
+            "type": "u32"
+          },
+          {
+            "name": "platinum_positions",
+            "type": "u32"
+          },
+          {
+            "name": "diamond_positions",
+            "type": "u32"
+          },
+          {
+            "name": "total_earnings",
+            "type": "u64"
+          },
+          {
+            "name": "available_balance",
+            "type": "u64"
+          },
+          {
+            "name": "is_wealthy_club_active",
+            "type": "bool"
           }
         ]
       }

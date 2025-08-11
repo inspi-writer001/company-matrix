@@ -180,6 +180,74 @@ export type X12Matrix = {
       "args": []
     },
     {
+      "name": "getMatrixStructure",
+      "discriminator": [
+        196,
+        98,
+        102,
+        75,
+        94,
+        188,
+        185,
+        246
+      ],
+      "accounts": [
+        {
+          "name": "globalState"
+        }
+      ],
+      "args": [
+        {
+          "name": "level",
+          "type": "u8"
+        },
+        {
+          "name": "startPosition",
+          "type": "u64"
+        },
+        {
+          "name": "count",
+          "type": "u8"
+        }
+      ],
+      "returns": {
+        "vec": {
+          "defined": {
+            "name": "positionInfo"
+          }
+        }
+      }
+    },
+    {
+      "name": "getUserPositions",
+      "discriminator": [
+        93,
+        107,
+        21,
+        26,
+        85,
+        200,
+        212,
+        216
+      ],
+      "accounts": [
+        {
+          "name": "userAccount"
+        }
+      ],
+      "args": [
+        {
+          "name": "user",
+          "type": "pubkey"
+        }
+      ],
+      "returns": {
+        "defined": {
+          "name": "userPositionsSummary"
+        }
+      }
+    },
+    {
       "name": "initialize",
       "discriminator": [
         175,
@@ -326,16 +394,16 @@ export type X12Matrix = {
       "args": []
     },
     {
-      "name": "processDiamondCompletion",
+      "name": "processDiamondCompletionWithChain",
       "discriminator": [
-        27,
-        75,
-        97,
-        223,
+        32,
+        224,
+        55,
         144,
-        194,
-        226,
-        4
+        129,
+        107,
+        199,
+        227
       ],
       "accounts": [
         {
@@ -369,14 +437,7 @@ export type X12Matrix = {
           "name": "tokenProgram"
         }
       ],
-      "args": [
-        {
-          "name": "sponsorChain",
-          "type": {
-            "vec": "pubkey"
-          }
-        }
-      ]
+      "args": []
     },
     {
       "name": "purchaseAllInMatrixSimple",
@@ -433,16 +494,16 @@ export type X12Matrix = {
       "args": []
     },
     {
-      "name": "purchaseLevel",
+      "name": "purchaseLevelWithDistribution",
       "discriminator": [
-        195,
-        138,
-        91,
-        201,
-        82,
-        188,
-        84,
-        103
+        190,
+        241,
+        228,
+        223,
+        191,
+        71,
+        43,
+        148
       ],
       "accounts": [
         {
@@ -495,6 +556,77 @@ export type X12Matrix = {
       "args": [
         {
           "name": "level",
+          "type": "u8"
+        },
+        {
+          "name": "downline",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "purchaseMultiplePositions",
+      "discriminator": [
+        139,
+        48,
+        163,
+        41,
+        55,
+        186,
+        84,
+        198
+      ],
+      "accounts": [
+        {
+          "name": "globalState",
+          "writable": true
+        },
+        {
+          "name": "sponsor",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "sponsorAccount",
+          "writable": true
+        },
+        {
+          "name": "sponsorToken",
+          "writable": true
+        },
+        {
+          "name": "downline"
+        },
+        {
+          "name": "downlineAccount",
+          "writable": true
+        },
+        {
+          "name": "escrow",
+          "writable": true
+        },
+        {
+          "name": "companyToken",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "tokenProgram"
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "level",
+          "type": "u8"
+        },
+        {
+          "name": "quantity",
           "type": "u8"
         },
         {
@@ -785,43 +917,63 @@ export type X12Matrix = {
     },
     {
       "code": 6002,
+      "name": "alreadyActive",
+      "msg": "Already active"
+    },
+    {
+      "code": 6003,
       "name": "insufficientBalance",
       "msg": "Insufficient balance"
     },
     {
-      "code": 6003,
+      "code": 6004,
       "name": "needTwoPifs",
       "msg": "Need 2 PIFs to withdraw"
     },
     {
-      "code": 6004,
+      "code": 6005,
       "name": "notParent",
       "msg": "Not the parent position"
     },
     {
-      "code": 6005,
+      "code": 6006,
       "name": "notOwner",
       "msg": "Not the owner"
     },
     {
-      "code": 6006,
+      "code": 6007,
       "name": "notLevel2",
       "msg": "Not a Level 2 placement"
     },
     {
-      "code": 6007,
+      "code": 6008,
       "name": "alreadyActivated",
       "msg": "Already activated"
     },
     {
-      "code": 6008,
+      "code": 6009,
       "name": "wealthyClubNotActivated",
       "msg": "Wealthy Club not activated"
     },
     {
-      "code": 6009,
+      "code": 6010,
       "name": "alreadyPurchased",
       "msg": "Combo package already purchased"
+    },
+    {
+      "code": 6011,
+      "name": "invalidQuantity",
+      "msg": "Invalid quantity"
+    },
+    {
+      "code": 6012,
+      "name": "matrixFull",
+      "msg": "Matrix is full"
+    },
+    {
+      "code": 6013,
+      "name": "selfRegister",
+      "msg": "Cannot register yourself"
     }
   ],
   "types": [
@@ -951,6 +1103,38 @@ export type X12Matrix = {
       }
     },
     {
+      "name": "positionInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "positionNumber",
+            "type": "u64"
+          },
+          {
+            "name": "parentPosition",
+            "type": "u64"
+          },
+          {
+            "name": "leftChild",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "rightChild",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "isComplete",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
       "name": "positionRecord",
       "type": {
         "kind": "struct",
@@ -1032,6 +1216,54 @@ export type X12Matrix = {
                 6
               ]
             }
+          }
+        ]
+      }
+    },
+    {
+      "name": "userPositionsSummary",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "silverPositions",
+            "type": "u32"
+          },
+          {
+            "name": "goldPositions",
+            "type": "u32"
+          },
+          {
+            "name": "sapphirePositions",
+            "type": "u32"
+          },
+          {
+            "name": "emeraldPositions",
+            "type": "u32"
+          },
+          {
+            "name": "platinumPositions",
+            "type": "u32"
+          },
+          {
+            "name": "diamondPositions",
+            "type": "u32"
+          },
+          {
+            "name": "totalEarnings",
+            "type": "u64"
+          },
+          {
+            "name": "availableBalance",
+            "type": "u64"
+          },
+          {
+            "name": "isWealthyClubActive",
+            "type": "bool"
           }
         ]
       }
