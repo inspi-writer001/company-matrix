@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token_interface::{self, Mint, TokenAccount, TokenInterface, TransferChecked};
 
-declare_id!("652Yr5RgLD7Akm1THNdsfT3VD2i4wBuiUyqhXPk1Ty3j");
+declare_id!("2x2nGb9og4nGz3Hu4KCLAF84buDYmk5aEktkDSV95vpw");
 
 #[program]
 pub mod x12_matrix {

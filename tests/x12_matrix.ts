@@ -122,7 +122,7 @@ describe("X12 Matrix - Updated Tests", () => {
     }
   };
 
-  it.skip("1. Initialize the program", async () => {
+  it("1. Initialize the program", async () => {
     const tx = await program.methods
       .initialize(company_Wallet)
       .signers([authority_wallet])
