@@ -1,0 +1,1346 @@
+{
+  "address": "2x2nGb9og4nGz3Hu4KCLAF84buDYmk5aEktkDSV95vpw",
+  "metadata": {
+    "name": "x12_matrix",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "activate_wealthy_club",
+      "discriminator": [
+        239,
+        205,
+        187,
+        5,
+        23,
+        161,
+        200,
+        76
+      ],
+      "accounts": [
+        {
+          "name": "global_state",
+          "writable": true
+        },
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "wealthy_club_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  119,
+                  101,
+                  97,
+                  108,
+                  116,
+                  104,
+                  121,
+                  95,
+                  99,
+                  108,
+                  117,
+                  98
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_token",
+          "writable": true
+        },
+        {
+          "name": "escrow",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "sponsor",
+          "type": {
+            "option": "pubkey"
+          }
+        }
+      ]
+    },
+    {
+      "name": "claim_level2_payment",
+      "discriminator": [
+        64,
+        2,
+        175,
+        13,
+        238,
+        206,
+        29,
+        253
+      ],
+      "accounts": [
+        {
+          "name": "global_state",
+          "writable": true
+        },
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "user_account",
+          "writable": true
+        },
+        {
+          "name": "position_record"
+        }
+      ],
+      "args": [
+        {
+          "name": "child_position",
+          "type": "u64"
+        },
+        {
+          "name": "level",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "create_user",
+      "discriminator": [
+        108,
+        227,
+        130,
+        130,
+        252,
+        109,
+        75,
+        218
+      ],
+      "accounts": [
+        {
+          "name": "user_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "get_matrix_structure",
+      "discriminator": [
+        196,
+        98,
+        102,
+        75,
+        94,
+        188,
+        185,
+        246
+      ],
+      "accounts": [
+        {
+          "name": "global_state"
+        }
+      ],
+      "args": [
+        {
+          "name": "level",
+          "type": "u8"
+        },
+        {
+          "name": "start_position",
+          "type": "u64"
+        },
+        {
+          "name": "count",
+          "type": "u8"
+        }
+      ],
+      "returns": {
+        "vec": {
+          "defined": {
+            "name": "PositionInfo"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_user_positions",
+      "discriminator": [
+        93,
+        107,
+        21,
+        26,
+        85,
+        200,
+        212,
+        216
+      ],
+      "accounts": [
+        {
+          "name": "user_account"
+        }
+      ],
+      "args": [
+        {
+          "name": "user",
+          "type": "pubkey"
+        }
+      ],
+      "returns": {
+        "defined": {
+          "name": "UserPositionsSummary"
+        }
+      }
+    },
+    {
+      "name": "initialize",
+      "discriminator": [
+        175,
+        175,
+        109,
+        31,
+        13,
+        152,
+        155,
+        237
+      ],
+      "accounts": [
+        {
+          "name": "global_state",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  108,
+                  111,
+                  98,
+                  97,
+                  108,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "rent",
+          "address": "SysvarRent111111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "company_wallet",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "pif_user",
+      "discriminator": [
+        110,
+        219,
+        100,
+        225,
+        236,
+        177,
+        191,
+        162
+      ],
+      "accounts": [
+        {
+          "name": "global_state",
+          "writable": true
+        },
+        {
+          "name": "sponsor",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "sponsor_account",
+          "writable": true
+        },
+        {
+          "name": "sponsor_token",
+          "writable": true
+        },
+        {
+          "name": "downline"
+        },
+        {
+          "name": "downline_account",
+          "writable": true
+        },
+        {
+          "name": "position_record",
+          "writable": true
+        },
+        {
+          "name": "escrow",
+          "writable": true
+        },
+        {
+          "name": "company_token",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "process_diamond_completion_with_chain",
+      "discriminator": [
+        32,
+        224,
+        55,
+        144,
+        129,
+        107,
+        199,
+        227
+      ],
+      "accounts": [
+        {
+          "name": "global_state",
+          "writable": true
+        },
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "user_account",
+          "writable": true
+        },
+        {
+          "name": "user_wealthy_club"
+        },
+        {
+          "name": "escrow",
+          "writable": true
+        },
+        {
+          "name": "company_token",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "purchase_all_in_matrix_simple",
+      "discriminator": [
+        46,
+        212,
+        40,
+        213,
+        9,
+        115,
+        127,
+        42
+      ],
+      "accounts": [
+        {
+          "name": "global_state",
+          "writable": true
+        },
+        {
+          "name": "sponsor",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "sponsor_account",
+          "writable": true
+        },
+        {
+          "name": "sponsor_token",
+          "writable": true
+        },
+        {
+          "name": "downline"
+        },
+        {
+          "name": "downline_account",
+          "writable": true
+        },
+        {
+          "name": "escrow",
+          "writable": true
+        },
+        {
+          "name": "company_token",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "purchase_level_with_distribution",
+      "discriminator": [
+        190,
+        241,
+        228,
+        223,
+        191,
+        71,
+        43,
+        148
+      ],
+      "accounts": [
+        {
+          "name": "global_state",
+          "writable": true
+        },
+        {
+          "name": "sponsor",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "sponsor_account",
+          "writable": true
+        },
+        {
+          "name": "sponsor_token",
+          "writable": true
+        },
+        {
+          "name": "downline"
+        },
+        {
+          "name": "downline_account",
+          "writable": true
+        },
+        {
+          "name": "position_record",
+          "writable": true
+        },
+        {
+          "name": "escrow",
+          "writable": true
+        },
+        {
+          "name": "company_token",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "level",
+          "type": "u8"
+        },
+        {
+          "name": "downline",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "purchase_multiple_positions",
+      "discriminator": [
+        139,
+        48,
+        163,
+        41,
+        55,
+        186,
+        84,
+        198
+      ],
+      "accounts": [
+        {
+          "name": "global_state",
+          "writable": true
+        },
+        {
+          "name": "sponsor",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "sponsor_account",
+          "writable": true
+        },
+        {
+          "name": "sponsor_token",
+          "writable": true
+        },
+        {
+          "name": "downline"
+        },
+        {
+          "name": "downline_account",
+          "writable": true
+        },
+        {
+          "name": "escrow",
+          "writable": true
+        },
+        {
+          "name": "company_token",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "level",
+          "type": "u8"
+        },
+        {
+          "name": "quantity",
+          "type": "u8"
+        },
+        {
+          "name": "downline",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "purchase_wealthy_club_all_in_simple",
+      "discriminator": [
+        60,
+        67,
+        149,
+        230,
+        242,
+        121,
+        196,
+        91
+      ],
+      "accounts": [
+        {
+          "name": "global_state",
+          "writable": true
+        },
+        {
+          "name": "sponsor",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "sponsor_account",
+          "writable": true
+        },
+        {
+          "name": "sponsor_token",
+          "writable": true
+        },
+        {
+          "name": "downline"
+        },
+        {
+          "name": "downline_account",
+          "writable": true
+        },
+        {
+          "name": "wealthy_club_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  119,
+                  101,
+                  97,
+                  108,
+                  116,
+                  104,
+                  121,
+                  95,
+                  99,
+                  108,
+                  117,
+                  98
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "downline"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow",
+          "writable": true
+        },
+        {
+          "name": "company_token",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "withdraw",
+      "discriminator": [
+        183,
+        18,
+        70,
+        156,
+        148,
+        109,
+        161,
+        34
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "user_account",
+          "writable": true
+        },
+        {
+          "name": "global_state"
+        },
+        {
+          "name": "user_token",
+          "writable": true
+        },
+        {
+          "name": "escrow",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "GlobalState",
+      "discriminator": [
+        163,
+        46,
+        74,
+        168,
+        216,
+        123,
+        133,
+        98
+      ]
+    },
+    {
+      "name": "PositionRecord",
+      "discriminator": [
+        108,
+        204,
+        45,
+        207,
+        168,
+        255,
+        213,
+        158
+      ]
+    },
+    {
+      "name": "UserAccount",
+      "discriminator": [
+        211,
+        33,
+        136,
+        16,
+        186,
+        110,
+        242,
+        127
+      ]
+    },
+    {
+      "name": "WealthyClubAccount",
+      "discriminator": [
+        141,
+        27,
+        29,
+        60,
+        21,
+        237,
+        227,
+        130
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "ComboPackagePurchased",
+      "discriminator": [
+        212,
+        204,
+        222,
+        35,
+        147,
+        229,
+        198,
+        84
+      ]
+    },
+    {
+      "name": "DiamondCompleted",
+      "discriminator": [
+        105,
+        100,
+        10,
+        255,
+        248,
+        28,
+        247,
+        28
+      ]
+    },
+    {
+      "name": "PaymentClaimed",
+      "discriminator": [
+        238,
+        86,
+        136,
+        254,
+        229,
+        217,
+        63,
+        80
+      ]
+    },
+    {
+      "name": "PositionCreated",
+      "discriminator": [
+        63,
+        226,
+        54,
+        63,
+        141,
+        22,
+        31,
+        221
+      ]
+    },
+    {
+      "name": "WealthyClubActivated",
+      "discriminator": [
+        251,
+        180,
+        60,
+        12,
+        148,
+        175,
+        90,
+        132
+      ]
+    },
+    {
+      "name": "WealthyClubPayment",
+      "discriminator": [
+        19,
+        160,
+        150,
+        204,
+        231,
+        208,
+        237,
+        15
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidLevel",
+      "msg": "Invalid level"
+    },
+    {
+      "code": 6001,
+      "name": "NotActive",
+      "msg": "Not active"
+    },
+    {
+      "code": 6002,
+      "name": "AlreadyActive",
+      "msg": "Already active"
+    },
+    {
+      "code": 6003,
+      "name": "InsufficientBalance",
+      "msg": "Insufficient balance"
+    },
+    {
+      "code": 6004,
+      "name": "NeedTwoPifs",
+      "msg": "Need 2 PIFs to withdraw"
+    },
+    {
+      "code": 6005,
+      "name": "NotParent",
+      "msg": "Not the parent position"
+    },
+    {
+      "code": 6006,
+      "name": "NotOwner",
+      "msg": "Not the owner"
+    },
+    {
+      "code": 6007,
+      "name": "NotLevel2",
+      "msg": "Not a Level 2 placement"
+    },
+    {
+      "code": 6008,
+      "name": "AlreadyActivated",
+      "msg": "Already activated"
+    },
+    {
+      "code": 6009,
+      "name": "WealthyClubNotActivated",
+      "msg": "Wealthy Club not activated"
+    },
+    {
+      "code": 6010,
+      "name": "AlreadyPurchased",
+      "msg": "Combo package already purchased"
+    },
+    {
+      "code": 6011,
+      "name": "InvalidQuantity",
+      "msg": "Invalid quantity"
+    },
+    {
+      "code": 6012,
+      "name": "MatrixFull",
+      "msg": "Matrix is full"
+    },
+    {
+      "code": 6013,
+      "name": "SelfRegister",
+      "msg": "Cannot register yourself"
+    }
+  ],
+  "types": [
+    {
+      "name": "ComboPackagePurchased",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "package_type",
+            "type": "string"
+          },
+          {
+            "name": "total_cost",
+            "type": "u64"
+          },
+          {
+            "name": "levels_purchased",
+            "type": "bytes"
+          }
+        ]
+      }
+    },
+    {
+      "name": "DiamondCompleted",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "re_entries_created",
+            "type": "u32"
+          },
+          {
+            "name": "wealthy_club_payment",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "GlobalState",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "company_wallet",
+            "type": "pubkey"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "total_positions",
+            "type": {
+              "array": [
+                "u64",
+                6
+              ]
+            }
+          },
+          {
+            "name": "escrow_bump",
+            "type": "u8"
+          },
+          {
+            "name": "wealthy_club_total_members",
+            "type": "u64"
+          },
+          {
+            "name": "wealthy_club_active_members",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PaymentClaimed",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "position",
+            "type": "u64"
+          },
+          {
+            "name": "from_child",
+            "type": "u64"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PositionCreated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "level",
+            "type": "u8"
+          },
+          {
+            "name": "position_number",
+            "type": "u64"
+          },
+          {
+            "name": "parent_number",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PositionInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "position_number",
+            "type": "u64"
+          },
+          {
+            "name": "parent_position",
+            "type": "u64"
+          },
+          {
+            "name": "left_child",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "right_child",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "is_complete",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PositionRecord",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "level",
+            "type": "u8"
+          },
+          {
+            "name": "position_number",
+            "type": "u64"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "UserAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "registered_at",
+            "type": "i64"
+          },
+          {
+            "name": "is_active",
+            "type": "bool"
+          },
+          {
+            "name": "sponsor",
+            "type": "pubkey"
+          },
+          {
+            "name": "pif_count",
+            "type": "u8"
+          },
+          {
+            "name": "total_earnings",
+            "type": "u64"
+          },
+          {
+            "name": "available_balance",
+            "type": "u64"
+          },
+          {
+            "name": "reserve_balance",
+            "type": "u64"
+          },
+          {
+            "name": "positions_count",
+            "type": {
+              "array": [
+                "u32",
+                6
+              ]
+            }
+          },
+          {
+            "name": "has_all_in_combo",
+            "type": "bool"
+          },
+          {
+            "name": "has_wealthy_club_combo",
+            "type": "bool"
+          },
+          {
+            "name": "combo_levels_used",
+            "type": {
+              "array": [
+                "bool",
+                6
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "UserPositionsSummary",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "silver_positions",
+            "type": "u32"
+          },
+          {
+            "name": "gold_positions",
+            "type": "u32"
+          },
+          {
+            "name": "sapphire_positions",
+            "type": "u32"
+          },
+          {
+            "name": "emerald_positions",
+            "type": "u32"
+          },
+          {
+            "name": "platinum_positions",
+            "type": "u32"
+          },
+          {
+            "name": "diamond_positions",
+            "type": "u32"
+          },
+          {
+            "name": "total_earnings",
+            "type": "u64"
+          },
+          {
+            "name": "available_balance",
+            "type": "u64"
+          },
+          {
+            "name": "is_wealthy_club_active",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "WealthyClubAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "sponsor",
+            "type": "pubkey"
+          },
+          {
+            "name": "activated_sponsor",
+            "type": "pubkey"
+          },
+          {
+            "name": "is_activated",
+            "type": "bool"
+          },
+          {
+            "name": "position_number",
+            "type": "u64"
+          },
+          {
+            "name": "total_earned",
+            "type": "u64"
+          },
+          {
+            "name": "joined_at",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "WealthyClubActivated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "position_number",
+            "type": "u64"
+          },
+          {
+            "name": "activated_sponsor",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "WealthyClubPayment",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "recipient",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "level",
+            "type": "u8"
+          },
+          {
+            "name": "from_user",
+            "type": "pubkey"
+          }
+        ]
+      }
+    }
+  ]
+}

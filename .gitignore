@@ -2,6 +2,7 @@
 .DS_Store
 target/debug
 target/deploy
+target/sbpf*
 target/release
 target/rust-analyzer
 target/sbf-solana-solana
