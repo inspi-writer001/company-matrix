@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token_interface::{self, Mint, TokenAccount, TokenInterface, TransferChecked};
 
-declare_id!("2x2nGb9og4nGz3Hu4KCLAF84buDYmk5aEktkDSV95vpw");
+declare_id!("2x2ou9Lwm3tb9CckiSHPf7iDe3n1qqnGNoHyk862DxS6");
 
 #[program]
 pub mod x12_matrix {
@@ -47,7 +47,7 @@ pub mod x12_matrix {
         )?;
 
         require!(!ctx.accounts.downline_account.is_active, MatrixError::AlreadyActive);
-        require!(ctx.accounts.downline.key() != ctx.accounts.sponsor.key(), MatrixError::SelfRegister);
+        // require!(ctx.accounts.downline.key() != ctx.accounts.sponsor.key(), MatrixError::SelfRegister); TODO remove this check when going live
 
         // Activate user
         ctx.accounts.downline_account.is_active = true;

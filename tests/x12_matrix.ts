@@ -37,6 +37,8 @@ import {
   displayMatrixTree,
 } from "./helpers";
 
+// ❗️❗️❗️❗️❗️❗️ Make sure you've run prep-wallet.bash befor running this test to make sure the accounts here already have some lamports and the mint token
+
 // Initialize wallets
 const authority_wallet = anchor.web3.Keypair.fromSecretKey(
   new Uint8Array(authority_wallet_file)

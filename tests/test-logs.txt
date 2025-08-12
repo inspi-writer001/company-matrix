@@ -1,0 +1,304 @@
+
+  X12 Matrix - Updated Tests
+✅ Program initialized: 2wK5vcpnXHX4Eiv25dR5RrBMEPgqrt3Yx6ECy4XGMTQ9834j62hNSNccADWRq2zsoWn1uXjNczJLb5132mQeoqyw
+    ✔ 1. Initialize the program (4175ms)
+=== Creating User Accounts ===
+
+User created: 42FVit59...
+User created: 36wR8P3C...
+User created: 38xc4PRF...
+User created: 22JgXeAF...
+User created: AHxKkLHN...
+User created: 5rEXo6q2...
+User created: 3HBySYLz...
+User created: pmDcc4WR...
+User created: 3TPACrJe...
+User created: 5AkuwWbV...
+✅ All user accounts created
+
+    ✔ 2. Create user accounts for all test users (36544ms)
+=== Test 3: Automatic Matrix Placement ===
+
+✅ User1 (self) PIF completed at position 1: 5j6uRp18...
+   └─ Placed in matrix: Position 1, Parent: 0
+✅ User2 PIF completed at position 2: 2koHQfDG...
+   └─ Placed in matrix: Position 2, Parent: 1
+✅ User3 PIF completed at position 3: 3qP5Urx5...
+   └─ Placed in matrix: Position 3, Parent: 1
+✅ User4 PIF completed at position 4: jgyJuG2i...
+   └─ Placed in matrix: Position 4, Parent: 2
+✅ User5 PIF completed at position 5: 4jaYhpD8...
+   └─ Placed in matrix: Position 5, Parent: 2
+✅ User6 PIF completed at position 6: 4FPvyg1t...
+   └─ Placed in matrix: Position 6, Parent: 3
+✅ User7 PIF completed at position 7: hbd1sC5K...
+   └─ Placed in matrix: Position 7, Parent: 3
+
+=== Silver Matrix Structure ===
+Total Positions: 7
+
+Position 1 (Root)
+├── Position 2 (Level 1, Parent: 1)
+├── Position 3 (Level 1, Parent: 1)
+    ├── Position 4 (Level 2, Parent: 2)
+    ├── Position 5 (Level 2, Parent: 2)
+    ├── Position 6 (Level 2, Parent: 3)
+    ├── Position 7 (Level 2, Parent: 3)
+
+✅ User1 PIF count: 2 (can withdraw)
+💰 User1 earnings: $0
+   Available: $0
+   Reserve: $0
+    ✔ 3. Test automatic forced matrix placement with PIFs (44144ms)
+
+=== Test 4: Level Purchases with Auto Payment ===
+
+✅ Gold level purchased at position 2: 5vzhbQqr...
+✅ Gold level purchased at position 3: 3QfTiipb...
+✅ Gold level purchased at position 4: xEuJdHUG...
+   └─ Payment distributed to Level 2 (Position 1)
+
+=== Gold Matrix Structure ===
+Total Positions: 4
+
+Position 1 (Root)
+├── Position 2 (Level 1, Parent: 1)
+├── Position 3 (Level 1, Parent: 1)
+    ├── Position 4 (Level 2, Parent: 2)
+
+💰 User1 total earnings: $0
+    ✔ 4. Test purchasing levels with automatic payment distribution (11168ms)
+
+=== Test 5: Multiple Position Purchase ===
+
+✅ 3 Gold positions purchased: ewMKpbzX...
+✅ User4 now has 3 Gold positions
+
+=== Gold Matrix Structure ===
+Total Positions: 7
+
+Position 1 (Root)
+├── Position 2 (Level 1, Parent: 1)
+├── Position 3 (Level 1, Parent: 1)
+    ├── Position 4 (Level 2, Parent: 2)
+    ├── Position 5 (Level 2, Parent: 2)
+    ├── Position 6 (Level 2, Parent: 3)
+    ├── Position 7 (Level 2, Parent: 3)
+    ✔ 5. Test purchasing multiple positions at once (8863ms)
+
+=== Test 6: Matrix Visualization ===
+
+Silver Matrix Structure:
+  Position 1:
+    Parent: 0
+    Left Child: 2
+    Right Child: 3
+    Complete: Yes
+  Position 2:
+    Parent: 1
+    Left Child: 4
+    Right Child: 5
+    Complete: Yes
+  Position 3:
+    Parent: 1
+    Left Child: 6
+    Right Child: 7
+    Complete: Yes
+  Position 4:
+    Parent: 2
+    Left Child: None
+    Right Child: None
+    Complete: No
+  Position 5:
+    Parent: 2
+    Left Child: None
+    Right Child: None
+    Complete: No
+  Position 6:
+    Parent: 3
+    Left Child: None
+    Right Child: None
+    Complete: No
+  Position 7:
+    Parent: 3
+    Left Child: None
+    Right Child: None
+    Complete: No
+
+User1 Position Summary:
+  Silver: 1 positions
+  Gold: 1 positions
+  Total Earnings: $0
+    ✔ 6. Test matrix visualization queries (991ms)
+
+=== Test 7: Combo Packages ===
+
+Error purchasing combo packages: AnchorError: AnchorError thrown in programs/x2_matrix/src/lib.rs:550. Error Code: NotActive. Error Number: 6001. Error Message: Not active.
+    at Function.parse (/home/inspiration-gx/Documents/solana/x12_matrix/node_modules/.pnpm/@coral-xyz+anchor@0.31.1_bufferutil@4.0.9_typescript@5.9.2_utf-8-validate@5.0.10/node_modules/@coral-xyz/anchor/src/error.ts:152:14)
+    at translateError (/home/inspiration-gx/Documents/solana/x12_matrix/node_modules/.pnpm/@coral-xyz+anchor@0.31.1_bufferutil@4.0.9_typescript@5.9.2_utf-8-validate@5.0.10/node_modules/@coral-xyz/anchor/src/error.ts:277:35)
+    at MethodsBuilder.rpc [as _rpcFn] (/home/inspiration-gx/Documents/solana/x12_matrix/node_modules/.pnpm/@coral-xyz+anchor@0.31.1_bufferutil@4.0.9_typescript@5.9.2_utf-8-validate@5.0.10/node_modules/@coral-xyz/anchor/src/program/namespace/rpc.ts:35:29)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5) {
+  errorLogs: [
+    'Program log: AnchorError thrown in programs/x2_matrix/src/lib.rs:550. Error Code: NotActive. Error Number: 6001. Error Message: Not active.'
+  ],
+  logs: [
+    'Program 2x2ou9Lwm3tb9CckiSHPf7iDe3n1qqnGNoHyk862DxS6 invoke [1]',
+    'Program log: Instruction: PurchaseAllInMatrixSimple',
+    'Program log: AnchorError thrown in programs/x2_matrix/src/lib.rs:550. Error Code: NotActive. Error Number: 6001. Error Message: Not active.',
+    'Program 2x2ou9Lwm3tb9CckiSHPf7iDe3n1qqnGNoHyk862DxS6 consumed 7582 of 200000 compute units',
+    'Program 2x2ou9Lwm3tb9CckiSHPf7iDe3n1qqnGNoHyk862DxS6 failed: custom program error: 0x1771'
+  ],
+  error: {
+    errorCode: { code: 'NotActive', number: 6001 },
+    errorMessage: 'Not active',
+    comparedValues: undefined,
+    origin: { file: 'programs/x2_matrix/src/lib.rs', line: 550 }
+  },
+  _programErrorStack: ProgramErrorStack {
+    stack: [
+      [PublicKey [PublicKey(2x2ou9Lwm3tb9CckiSHPf7iDe3n1qqnGNoHyk862DxS6)]]
+    ]
+  }
+}
+Program logs: [
+  'Program 2x2ou9Lwm3tb9CckiSHPf7iDe3n1qqnGNoHyk862DxS6 invoke [1]',
+  'Program log: Instruction: PurchaseAllInMatrixSimple',
+  'Program log: AnchorError thrown in programs/x2_matrix/src/lib.rs:550. Error Code: NotActive. Error Number: 6001. Error Message: Not active.',
+  'Program 2x2ou9Lwm3tb9CckiSHPf7iDe3n1qqnGNoHyk862DxS6 consumed 7582 of 200000 compute units',
+  'Program 2x2ou9Lwm3tb9CckiSHPf7iDe3n1qqnGNoHyk862DxS6 failed: custom program error: 0x1771'
+]
+    1) 7. Test combo package purchases
+
+=== Test 8: Withdrawal Test ===
+
+User1 Withdrawal Status:
+  PIF Count: 2 (Required: 2)
+  Available Balance: $0
+❌ Cannot withdraw - requirements not met
+    ✔ 8. Test withdrawal functionality (489ms)
+
+=== Test 9: Team Structure ===
+
+User1 has 3 direct downlines:
+1. FjVcYPuz...
+   Active: true
+   PIF Count: 2
+   Positions: Silver(1), Gold(1)
+2. Cr5pcEtq...
+   Active: true
+   PIF Count: 2
+   Positions: Silver(1), Gold(2)
+3. 6Tgtin7Q...
+   Active: true
+   PIF Count: 2
+   Positions: Silver(1), Gold(1)
+Server responded with 429 Too Many Requests.  Retrying after 500ms delay...
+Server responded with 429 Too Many Requests.  Retrying after 500ms delay...
+Server responded with 429 Too Many Requests.  Retrying after 1000ms delay...
+Server responded with 429 Too Many Requests.  Retrying after 1000ms delay...
+
+Total team size: 17 members
+    ✔ 9. Test team structure fetching (7985ms)
+
+=== Test 10: User Analysis Report ===
+
+👤 USER1
+📅 Registered: 8/12/2025
+🎯 Plan Type: Individual Levels (2 levels)
+💰 Total Investment: $3
+📈 Status: ✅ Active
+👥 PIF Count: 2 (❌ Cannot Withdraw)
+💵 Available Balance: $0.00
+🏦 Reserve Balance: $0.00
+📊 Total Earnings: $0.00
+🎮 Active Levels:
+   Silver: 1 positions
+   Gold: 1 positions
+🎲 Potential Earnings: $6 (if all matrices complete)
+
+────────────────────────────────────────────────────────────
+👤 USER2
+📅 Registered: 8/12/2025
+🎯 Plan Type: Individual Levels (2 levels)
+💰 Total Investment: $3
+📈 Status: ✅ Active
+👥 PIF Count: 2 (❌ Cannot Withdraw)
+💵 Available Balance: $0.00
+🏦 Reserve Balance: $0.00
+📊 Total Earnings: $0.00
+🎮 Active Levels:
+   Silver: 1 positions
+   Gold: 1 positions
+🎲 Potential Earnings: $6 (if all matrices complete)
+
+────────────────────────────────────────────────────────────
+👤 USER3
+📅 Registered: 8/12/2025
+🎯 Plan Type: Individual Levels (2 levels)
+💰 Total Investment: $5
+📈 Status: ✅ Active
+👥 PIF Count: 2 (❌ Cannot Withdraw)
+💵 Available Balance: $0.00
+🏦 Reserve Balance: $0.00
+📊 Total Earnings: $0.00
+🎮 Active Levels:
+   Silver: 1 positions
+   Gold: 2 positions
+🎲 Potential Earnings: $10 (if all matrices complete)
+
+────────────────────────────────────────────────────────────
+👤 USER4
+📅 Registered: 8/12/2025
+🎯 Plan Type: Individual Levels (3 levels)
+💰 Total Investment: $11
+📈 Status: ✅ Active
+👥 PIF Count: 0 (❌ Cannot Withdraw)
+💵 Available Balance: $0.00
+🏦 Reserve Balance: $0.00
+📊 Total Earnings: $0.00
+🎮 Active Levels:
+   Silver: 1 positions
+   Gold: 3 positions
+   Sapphire: 1 positions
+🎲 Potential Earnings: $22 (if all matrices complete)
+
+────────────────────────────────────────────────────────────
+    ✔ 10. Comprehensive user analysis (4503ms)
+
+=== Test 11: Matrix Completion ===
+
+Global Matrix Status:
+  Silver: 7 positions
+    ✅ 1 matrix(es) completed
+  Gold: 7 positions
+    ✅ 1 matrix(es) completed
+  Sapphire: 1 positions
+  Emerald: 0 positions
+  Platinum: 0 positions
+  Diamond: 0 positions
+    ✔ 11. Test matrix completion and auto-upgrade (1636ms)
+
+=== Test 12: Error Handling ===
+
+✅ Correctly rejected duplicate PIF: AnchorError thrown in programs/x2_matrix/src/lib.rs:49. Error Code: AlreadyActive. Error Number: 6002. Error Message: Already active.
+✅ Correctly rejected withdrawal: AnchorError thrown in programs/x2_matrix/src/lib.rs:404. Error Code: InsufficientBalance. Error Number: 6003. Error Message: Insufficient balance.
+✅ Correctly rejected invalid level: Cannot read properties of undefined (reading 'toNumber')
+
+✅ All error handling tests passed
+    ✔ 12. Test error handling for invalid operations (7579ms)
+
+
+  11 passing (2m)
+  1 failing
+
+  1) X12 Matrix - Updated Tests
+       7. Test combo package purchases:
+     Error: AnchorError thrown in programs/x2_matrix/src/lib.rs:550. Error Code: NotActive. Error Number: 6001. Error Message: Not active.
+      at Function.parse (node_modules/.pnpm/@coral-xyz+anchor@0.31.1_bufferutil@4.0.9_typescript@5.9.2_utf-8-validate@5.0.10/node_modules/@coral-xyz/anchor/src/error.ts:152:14)
+      at translateError (node_modules/.pnpm/@coral-xyz+anchor@0.31.1_bufferutil@4.0.9_typescript@5.9.2_utf-8-validate@5.0.10/node_modules/@coral-xyz/anchor/src/error.ts:277:35)
+      at MethodsBuilder.rpc [as _rpcFn] (node_modules/.pnpm/@coral-xyz+anchor@0.31.1_bufferutil@4.0.9_typescript@5.9.2_utf-8-validate@5.0.10/node_modules/@coral-xyz/anchor/src/program/namespace/rpc.ts:35:29)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+
+
+
+inspiration-gx@inspiration-gx:~/Documents/solana/x12_matrix$ 
